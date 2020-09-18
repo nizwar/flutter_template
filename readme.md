@@ -31,7 +31,7 @@ Need more shadow from regular `Card`? use `CustomCard`!
 
 ## Another Things!
 ### HttpConnection
-`HttpConnection` is an Abstract Class, you need to extends to use it, but don't worry, it much easier than you thing, let me give you an example code here!
+`HttpConnection` is an Abstract Class, you need to extends to use it, but don't worry, it much easier than you think, let me give you an example codes here!
 
 ```dart
     class UserHttp extends HttpConnection{
