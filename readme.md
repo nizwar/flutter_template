@@ -21,7 +21,7 @@ I got something to make your code experience much fun!
 You can use `ColumnDivider` and `RowDivider` to make distance between Widgets, default space = 10 (you can change it on customDivider.dart)
 
 ### Shimmer
-We got `ShimmerObject`, `ShimmeringObject`, `ShimmerContainer`, you can group your `ShimmerObjects` / or anything using `ShimmerContainer`, if you want to directly write shimmering object, use ShimmeringObject.
+We got `ShimmerObject`, `ShimmeringObject`, `ShimmerContainer`, you can group your `ShimmerObjects` / or anything using `ShimmerContainer`, if you want to directly write shimmering object, use `ShimmeringObject`.
 
 ### Custom Image
 Just simple image widget using `cached_network_image`, you can call it easily using `CustomImage` and here we go!
