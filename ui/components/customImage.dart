@@ -9,7 +9,7 @@ class CustomImage extends StatelessWidget {
   final BoxFit fit;
   final bool showBlackGradient;
 
-  const CustomImage({Key key, @required this.url, this.width, this.height, this.borderRadius, this.fit, this.zoomOnTouch = false, this.showBlackGradient = false}) : super(key: key);
+  const CustomImage({Key key, @required this.url, this.width, this.height, this.borderRadius, this.fit, this.showBlackGradient = false}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(

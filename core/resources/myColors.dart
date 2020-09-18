@@ -4,4 +4,4 @@ import 'package:flutter/material.dart';
 
 const Color primaryColor = Colors.blue;
 const Color accentColor = Colors.orange;
-const Color shadowColor = Colors.black.withOpacity(.05);
+Color get shadowColor => Colors.black.withOpacity(.05);
