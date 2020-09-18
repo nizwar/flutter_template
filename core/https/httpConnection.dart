@@ -9,7 +9,7 @@ abstract class HttpConnection {
     //You can init providers here, so it can be access from subclass
   }
 
-  Future post<T>(String url, {Map<String, String> params, dynamic body, dynamic headers, bool pure = false}) async {
+  Future<T> post<T>(String url, {Map<String, String> params, dynamic body, dynamic headers, bool pure = false}) async {
     try {
       var resp = await Dio().post(url + paramsToString(params), data: body, options: Options(headers: headers));
       if (pure) return resp.data;
@@ -21,7 +21,7 @@ abstract class HttpConnection {
     }
   }
 
-  Future get<T>(String url, {Map<String, String> params, dynamic headers, bool pure = false}) async {
+  Future<T> get<T>(String url, {Map<String, String> params, dynamic headers, bool pure = false}) async {
     try {
       var resp = await Dio().get(url + paramsToString(params), options: Options(headers: headers));
       if (pure) return resp.data;
