@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'core/resources/myColors.dart';
 import 'ui/screens/mainScreen.dart';
+import 'package:provider/provider.dart';
 
 main() {
   return runApp(
