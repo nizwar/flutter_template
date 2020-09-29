@@ -8,6 +8,7 @@ Before we start, Use these plugins to make sure everything is chill!
   shimmer: ^1.1.1
   cached_network_image: ^2.3.2+1
   shared_preferences: ^0.5.10
+  ndialog: ^3.0.0
 ``` 
 # What 'Magic Spell' on this template?
 I got something to make your code experience much fun!
@@ -76,6 +77,15 @@ Need more shadow from regular `Card`? use `CustomCard`!
         //to get the token simply use this
         String token = pref.token;
     }
+```
+
+### Navigations
+Don't waste your time to show the screen by writing `Navigator.push(context, MaterialPageRoute (builder: blablabla))`, now you can easily use `startScreen()` or `replaceScreen()`, and simply close it by `closeScreen()`
+
+```dart
+    startScreen(context, YourScreen());
+    replaceScreen(context, YourScreen());
+    closeScreen(context);
 ```
 
 Okay that's it, I'll update this repo if i found something!, 
