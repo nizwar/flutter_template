@@ -1,14 +1,14 @@
 # Flutter Template
 My personal project structure's template while making new project. On this template, I'm using provider. :)
 
-Before we start, Use these plugins to make sure everything is chill!
+Before we start, Use these plugins to make sure everything is setup!
 ```yaml
-  dio: ^3.0.10
-  provider: ^4.3.2+3
-  shimmer: ^1.1.1
-  cached_network_image: ^2.5.0
-  shared_preferences: ^0.5.12+4
-  ndialog: ^3.2.1
+  dio: any
+  provider: any
+  shimmer: any
+  cached_network_image: any
+  shared_preferences: any
+  ndialog: any
 ``` 
 # What 'Magic Spell' on this template?
 I got something to make your code experience much fun!
