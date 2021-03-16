@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import '../../core/resources/myColors.dart';
 
 class CustomCard extends StatelessWidget {
-  final double borderRadius;
-  final Color backgroundColor;
-  final EdgeInsetsGeometry margin;
-  final EdgeInsetsGeometry padding;
-  final BoxShadow boxShadow;
-  final Widget child;
-  final bool showOnOverflow;
+  final double? borderRadius;
+  final Color? backgroundColor;
+  final EdgeInsetsGeometry? margin;
+  final EdgeInsetsGeometry? padding;
+  final BoxShadow? boxShadow;
+  final Widget? child;
+  final bool? showOnOverflow;
 
   const CustomCard({
-    Key key,
+    Key? key,
     this.borderRadius,
     this.child,
     this.boxShadow,
