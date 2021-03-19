@@ -1,18 +1,15 @@
-# Flutter Template
-My personal project structure's template while making new project. On this template, I'm using provider. :)
+# NFlutter Template
+This project using NFlutter Template (https://github.com/nizwar/flutter_template.git) with NullSafety Support!
 
 Before we start, Use these plugins to make sure everything is setup!
 ```yaml
-  dio: any
+  dio: 4.0.0-beta7 #Use nullsafety version
   provider: any
-  shimmer: any
-  cached_network_image: any
+  shimmer: ^2.0.0-nullsafety.0 #Use nullsafety version
+  cached_network_image: ^3.0.0-nullsafety #User nullsafety veresion
   shared_preferences: any
   ndialog: any
 ``` 
-# What 'Magic Spell' on this template?
-I got something to make your code experience much fun!
-
 ## Widget Things!
 ### Custom Divider
 You can use `ColumnDivider` and `RowDivider` to make distance between Widgets, default space = 10 (you can change it on customDivider.dart)

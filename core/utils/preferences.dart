@@ -7,15 +7,9 @@ class Preferences {
 
   Preferences(this.shared);
 
-  //Just an example!, write your own!
-  ///You can simply write this!
-  set token(String value) => shared.setString("token", value);
+  set token(String? value) => shared.setString("token", value!);
 
-  ///Or something like this!
-  void saveToken(String value) => shared.setString("token", value);
-
-  //To get stored "token" data
-  String get token => shared.getString("token");
+  String? get token => shared.getString("token");
 
   static logout(BuildContext context) {
     instance().then((value) {
