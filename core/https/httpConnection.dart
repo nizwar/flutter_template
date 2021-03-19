@@ -7,7 +7,8 @@ abstract class HttpConnection {
 
   HttpConnection(this.context);
 
-  Future post(String url, {Map<String, String> params, dynamic body, dynamic headers, bool pure = false}) async {
+  //if pure == true, it will return data without parse it to ApiResponse
+  Future post(String url, {Map<String, String>? params, dynamic body, dynamic headers, bool pure = false}) async {
     try {
       var resp = await Dio().post(url + paramsToString(params), data: body, options: Options(headers: headers));
       if (pure) return resp.data;
@@ -19,8 +20,7 @@ abstract class HttpConnection {
     }
   }
 
-  //if pure == true, it will return data without parse it to ApiResponse
-  Future get(String url, {Map<String, String> params, dynamic headers, bool pure = false}) async {
+  Future get(String url, {Map<String, String>? params, dynamic headers, bool pure = false}) async {
     try {
       var resp = await Dio().get(url + paramsToString(params), options: Options(headers: headers));
       if (pure) return resp.data;
@@ -32,7 +32,7 @@ abstract class HttpConnection {
     }
   }
 
-  static String paramsToString(Map<String, String> params) {
+  static String paramsToString(Map<String, String>? params) {
     if (params == null) return "";
     String output = "?";
     params.forEach((key, value) {
@@ -44,17 +44,17 @@ abstract class HttpConnection {
 
 class ApiResponse<T> extends Model {
   ApiResponse({
-    this.success,
+    this.success = false,
     this.message,
     this.data,
   });
 
-  bool success;
-  String message;
-  T data;
+  bool? success;
+  String? message;
+  T? data;
 
   factory ApiResponse.fromJson(Map<String, dynamic> json) => ApiResponse(
-        success: json["success"] ?? false,
+        success: json["success"],
         message: json["message"],
         data: json["data"],
       );
