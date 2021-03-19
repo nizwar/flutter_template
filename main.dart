@@ -1,25 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_551/core/utils/preferences.dart';
+import 'package:provider/provider.dart';
+import 'core/providers/userProvider.dart';
 import 'core/resources/myColors.dart';
 import 'ui/screens/mainScreen.dart';
-import 'package:provider/provider.dart';
 
 main() {
   return runApp(
     MultiProvider(
       providers: [
-        //.Your Providers here.//
-        //.If you not using providers or just using one provider, just remove/replace the MultiProvider.//
+        ChangeNotifierProvider(
+          create: (context) => UserProvider(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
+        theme: ThemeData.light().copyWith(
           primaryColor: primaryColor,
+          scaffoldBackgroundColor: Colors.white,
           accentColor: accentColor,
         ),
         home: Root(),
       ),
     ),
-  ); 
+  );
 }
 
 class Root extends StatefulWidget {
@@ -28,12 +32,23 @@ class Root extends StatefulWidget {
 }
 
 class _RootState extends State<Root> {
-  //If you got something todo before mainscreen appear
-  //e.g loadUserData or check if user already loged in
+  bool _ready = false;
+  @override
+  void initState() {
+    Preferences.instance().then((value) {
+      if (value.token != null)
+        UserProvider.instance(context).token = value.token;
+
+      setState(() {
+        _ready = true;
+      });
+    }).timeout(Duration(seconds: 5));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MainScreen();
+    return _ready ? MainScreen() : SplashScreen();
   }
 }
 
@@ -42,6 +57,13 @@ class _RootState extends State<Root> {
 class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      body: Center(
+        child: Image.asset(
+          "assets/logo-new.png",
+          height: 200,
+        ),
+      ),
+    );
   }
 }
