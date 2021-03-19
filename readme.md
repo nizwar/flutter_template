@@ -5,8 +5,8 @@ Before we start, Use these plugins to make sure everything is setup!
 ```yaml
   dio: 4.0.0-beta7 #Use nullsafety version
   provider: any
-  shimmer: any
-  cached_network_image: any
+  shimmer: ^2.0.0-nullsafety.0 #Use nullsafety version
+  cached_network_image: ^3.0.0-nullsafety #User nullsafety veresion
   shared_preferences: any
   ndialog: any
 ``` 
