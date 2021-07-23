@@ -8,36 +8,44 @@ class CustomImage extends StatelessWidget {
   final double? width, height;
   final BorderRadius? borderRadius;
   final BoxFit? fit;
-  final bool? showBlackGradient;
+  final bool showBlackGradient;
   final bool? zoomOnTap;
+  final String? errorAssets;
 
-  const CustomImage({
+  CustomImage({
     Key? key,
     @required this.url,
     this.width,
     this.height,
     this.borderRadius,
+    this.errorAssets,
     this.fit = BoxFit.cover,
     this.zoomOnTap = false,
     this.showBlackGradient = false,
   }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (zoomOnTap ?? false)
-          ? () {
-              ZoomDialog(
-                child: CustomImage(
-                  fit: BoxFit.contain,
-                  url: url,
-                ),
-              ).show(context);
-            }
-          : null,
+      onTap: () {
+        if (zoomOnTap ?? false)
+          ZoomDialog(
+                  child: CustomImage(
+                      url: url,
+                      borderRadius: borderRadius,
+                      errorAssets: errorAssets,
+                      fit: fit,
+                      height: height,
+                      width: width,
+                      showBlackGradient: false,
+                      zoomOnTap: false))
+              .show(context);
+      },
       child: Container(
         height: height ?? double.infinity,
         width: width ?? double.infinity,
-        decoration: BoxDecoration(borderRadius: borderRadius ?? BorderRadius.circular(0.0)),
+        decoration: BoxDecoration(
+            borderRadius: borderRadius ?? BorderRadius.circular(0.0)),
         child: ClipRRect(
           borderRadius: borderRadius ?? BorderRadius.circular(0.0),
           child: Stack(
@@ -50,20 +58,22 @@ class CustomImage extends StatelessWidget {
                 placeholder: (context, string) => Container(
                   alignment: Alignment.center,
                   child: ShimmeringObject(
-                    radius: borderRadius ?? BorderRadius.circular(0.0),
-                  ),
+                      radius: borderRadius ?? BorderRadius.circular(0.0)),
                 ),
                 errorWidget: (context, string, obj) => Image.asset(
-                  "assets/images/nothumb.webp",
+                  errorAssets ?? "assets/images/nothumb.webp",
                   fit: BoxFit.cover,
                 ),
               ),
-              showBlackGradient!
-                  ? Container(
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(colors: [Colors.black.withOpacity(.5), Colors.transparent, Colors.black.withOpacity(.5)], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
-                    )
-                  : SizedBox.shrink(),
+              if (showBlackGradient)
+                Container(
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(colors: [
+                    Colors.black.withOpacity(.5),
+                    Colors.transparent,
+                    Colors.black.withOpacity(.5)
+                  ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+                )
             ],
           ),
         ),
