@@ -6,14 +6,23 @@ class ShimmerObject extends StatelessWidget {
   final BorderRadius? radius;
   final EdgeInsets? margin, padding;
 
-  const ShimmerObject({Key? key, this.width, this.height, this.radius, this.margin, this.padding}) : super(key: key);
+  const ShimmerObject(
+      {Key? key,
+      this.width,
+      this.height,
+      this.radius,
+      this.margin,
+      this.padding})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: width ?? double.infinity,
       height: height ?? double.infinity,
-      decoration: BoxDecoration(borderRadius: radius ?? BorderRadius.circular(5), color: Colors.grey.shade100),
+      decoration: BoxDecoration(
+          borderRadius: radius ?? BorderRadius.circular(5),
+          color: Colors.grey.shade100),
       margin: margin ?? EdgeInsets.only(),
       padding: padding ?? EdgeInsets.only(),
     );
@@ -25,7 +34,14 @@ class ShimmeringObject extends StatelessWidget {
   final BorderRadius? radius;
   final EdgeInsets? margin, padding;
 
-  const ShimmeringObject({Key? key, this.width, this.height, this.radius, this.margin, this.padding}) : super(key: key);
+  const ShimmeringObject(
+      {Key? key,
+      this.width,
+      this.height,
+      this.radius,
+      this.margin,
+      this.padding})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return ShimmerContainer(
@@ -46,9 +62,8 @@ class ShimmerContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: Colors.grey.shade200,
-      child: child!,
-      highlightColor: Colors.grey.shade100,
-    );
+        baseColor: Colors.grey.shade200,
+        child: child!,
+        highlightColor: Colors.grey.shade100);
   }
 }
