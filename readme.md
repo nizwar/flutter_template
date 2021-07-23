@@ -1,12 +1,12 @@
 # NFlutter Template
 This project using NFlutter Template (https://github.com/nizwar/flutter_template.git) with NullSafety Support!
 
-Before we start, Use these plugins to make sure everything is setup!
+Before we start, Use these plugins to make sure everything's setup!
 ```yaml
-  dio: 4.0.0-beta7 #Use nullsafety version
+  dio: any
   provider: any
-  shimmer: ^2.0.0-nullsafety.0 #Use nullsafety version
-  cached_network_image: ^3.0.0-nullsafety #User nullsafety veresion
+  shimmer: any
+  cached_network_image: any
   shared_preferences: any
   ndialog: any
 ``` 
