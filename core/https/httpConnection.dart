@@ -1,16 +1,22 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import '../models/model.dart';
+import '../resources/environment.dart';
 
 abstract class HttpConnection {
   final BuildContext context;
 
+  Dio _dio = Dio(BaseOptions(baseUrl: endpoint));
+
   HttpConnection(this.context);
 
-  //if pure == true, it will return data without parse it to ApiResponse
-  Future post(String url, {Map<String, String>? params, dynamic body, dynamic headers, bool pure = false}) async {
+  ///if pure == true, it will return data without parse it to ApiResponse
+  Future get(String url,
+      {Map<String, String>? params, dynamic headers, bool pure = false}) async {
     try {
-      var resp = await Dio().post(url + paramsToString(params), data: body, options: Options(headers: headers));
+      // _preRequest();
+      var resp = await _dio.get(url + paramsToString(params),
+          options: Options(headers: headers));
       if (pure) return resp.data;
       if (resp.data != null) {
         return ApiResponse.fromJson(resp.data);
@@ -20,9 +26,16 @@ abstract class HttpConnection {
     }
   }
 
-  Future get(String url, {Map<String, String>? params, dynamic headers, bool pure = false}) async {
+  ///if pure == true, it will return data without parse it to ApiResponse
+  Future post(String url,
+      {Map<String, String>? params,
+      dynamic body,
+      dynamic headers,
+      bool pure = false}) async {
     try {
-      var resp = await Dio().get(url + paramsToString(params), options: Options(headers: headers));
+      // _preRequest();
+      var resp = await _dio.post(url + paramsToString(params),
+          data: body, options: Options(headers: headers));
       if (pure) return resp.data;
       if (resp.data != null) {
         return ApiResponse.fromJson(resp.data);
@@ -31,6 +44,59 @@ abstract class HttpConnection {
       return null;
     }
   }
+
+  ///if pure == true, it will return data without parse it to ApiResponse
+  Future put(String url,
+      {Map<String, String>? params,
+      dynamic body,
+      dynamic headers,
+      bool pure = false}) async {
+    try {
+      // _preRequest();
+      var resp = await _dio.put(url + paramsToString(params),
+          data: body, options: Options(headers: headers));
+      if (pure) return resp.data;
+      if (resp.data != null) {
+        return ApiResponse.fromJson(resp.data);
+      }
+    } catch (e) {
+      return null;
+    }
+  }
+
+  ///if pure == true, it will return data without parse it to ApiResponse
+  Future delete(String url,
+      {Map<String, String>? params,
+      dynamic body,
+      dynamic headers,
+      bool pure = false}) async {
+    try {
+      // _preRequest();
+      var resp = await _dio.delete(url + paramsToString(params),
+          data: body, options: Options(headers: headers));
+      if (pure) return resp.data;
+      if (resp.data != null) {
+        return ApiResponse.fromJson(resp.data);
+      }
+    } catch (e) {
+      return null;
+    }
+  }
+
+  ///Add something before request, you can simply manipulate headers or anyting in here
+  ///And got called before request called
+  ///
+  ///for an Example :
+  /// Map<String, String>? _preRequest(Map<String, String>? headers) {
+  ///   var userProvider = UserProvider.of(context);
+  ///   if (userProvider.authToken != null) {
+  ///     if (headers != null)
+  ///       headers.addEntries([MapEntry("Access-Token", "Bearer ${userProvider.authToken!.accessToken}")]);
+  ///     else
+  ///       headers = {"Access-Token": "Bearer ${userProvider.authToken!.accessToken}"};
+  ///   }
+  ///   return headers;
+  /// }
 
   static String paramsToString(Map<String, String>? params) {
     if (params == null) return "";
