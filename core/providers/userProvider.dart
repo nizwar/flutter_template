@@ -10,5 +10,5 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  static UserProvider instance(BuildContext context) => Provider.of(context, listen: false);
+  static UserProvider of(BuildContext context) => context.read();
 }
