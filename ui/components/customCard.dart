@@ -26,21 +26,13 @@ class CustomCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: margin ?? EdgeInsets.only(),
-      decoration: BoxDecoration(boxShadow: [
-        boxShadow ?? BoxShadow(blurRadius: 5, color: shadowColor),
-      ], borderRadius: BorderRadius.circular(borderRadius ?? 10), color: backgroundColor ?? Theme.of(context).cardColor),
-      child: showOnOverflow ?? true
-          ? Padding(
-              padding: padding ?? EdgeInsets.only(),
-              child: child ?? SizedBox.shrink(),
-            )
-          : ClipRRect(
-              child: Padding(
-                padding: padding ?? EdgeInsets.only(),
-                child: child ?? SizedBox.shrink(),
-              ),
-              borderRadius: BorderRadius.circular(borderRadius ?? 10),
-            ),
+      clipBehavior: (showOnOverflow ?? true) ? Clip.none : Clip.antiAlias,
+      decoration: BoxDecoration(
+        boxShadow: [boxShadow ?? BoxShadow(blurRadius: 5, color: shadowColor)],
+        borderRadius: BorderRadius.circular(borderRadius ?? 10),
+        color: backgroundColor ?? Theme.of(context).cardColor,
+      ),
+      child: child ?? SizedBox.shrink(),
     );
   }
 }
