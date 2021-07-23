@@ -11,6 +11,7 @@ class CustomImage extends StatelessWidget {
   final bool showBlackGradient;
   final bool? zoomOnTap;
   final String? errorAssets;
+  final BoxShape? boxShape;
 
   CustomImage({
     Key? key,
@@ -22,6 +23,7 @@ class CustomImage extends StatelessWidget {
     this.fit = BoxFit.cover,
     this.zoomOnTap = false,
     this.showBlackGradient = false,
+    this.boxShape,
   }) : super(key: key);
 
   @override
@@ -31,51 +33,39 @@ class CustomImage extends StatelessWidget {
         if (zoomOnTap ?? false)
           ZoomDialog(
                   child: CustomImage(
-                      url: url,
-                      borderRadius: borderRadius,
-                      errorAssets: errorAssets,
-                      fit: fit,
-                      height: height,
-                      width: width,
-                      showBlackGradient: false,
-                      zoomOnTap: false))
+                      url: url, boxShape: boxShape, borderRadius: borderRadius, errorAssets: errorAssets, fit: fit, height: height, width: width, showBlackGradient: false, zoomOnTap: false))
               .show(context);
       },
       child: Container(
         height: height ?? double.infinity,
         width: width ?? double.infinity,
+        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-            borderRadius: borderRadius ?? BorderRadius.circular(0.0)),
-        child: ClipRRect(
           borderRadius: borderRadius ?? BorderRadius.circular(0.0),
-          child: Stack(
-            fit: StackFit.expand,
-            alignment: Alignment.center,
-            children: <Widget>[
-              CachedNetworkImage(
-                fit: fit!,
-                imageUrl: url!,
-                placeholder: (context, string) => Container(
-                  alignment: Alignment.center,
-                  child: ShimmeringObject(
-                      radius: borderRadius ?? BorderRadius.circular(0.0)),
-                ),
-                errorWidget: (context, string, obj) => Image.asset(
-                  errorAssets ?? "assets/images/nothumb.webp",
-                  fit: BoxFit.cover,
-                ),
+          shape: boxShape ?? BoxShape.rectangle,
+        ),
+        child: Stack(
+          fit: StackFit.expand,
+          alignment: Alignment.center,
+          children: <Widget>[
+            CachedNetworkImage(
+              fit: fit!,
+              imageUrl: url!,
+              placeholder: (context, string) => Container(
+                alignment: Alignment.center,
+                child: ShimmeringObject(radius: borderRadius ?? BorderRadius.circular(0.0)),
               ),
-              if (showBlackGradient)
-                Container(
-                  decoration: BoxDecoration(
-                      gradient: LinearGradient(colors: [
-                    Colors.black.withOpacity(.5),
-                    Colors.transparent,
-                    Colors.black.withOpacity(.5)
-                  ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
-                )
-            ],
-          ),
+              errorWidget: (context, string, obj) => Image.asset(
+                errorAssets ?? "assets/images/nothumb.webp",
+                fit: BoxFit.cover,
+              ),
+            ),
+            if (showBlackGradient)
+              Container(
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(colors: [Colors.black.withOpacity(.5), Colors.transparent, Colors.black.withOpacity(.5)], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+              )
+          ],
         ),
       ),
     );
