@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../core/resources/myColors.dart';
+import '../../core/resources/colors.dart';
 
 class CustomCard extends StatelessWidget {
   final double? borderRadius;
@@ -25,14 +25,14 @@ class CustomCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: margin ?? EdgeInsets.only(),
+      margin: margin ?? const EdgeInsets.only(),
       clipBehavior: (showOnOverflow ?? true) ? Clip.none : Clip.antiAlias,
       decoration: BoxDecoration(
         boxShadow: [boxShadow ?? BoxShadow(blurRadius: 5, color: shadowColor)],
         borderRadius: BorderRadius.circular(borderRadius ?? 10),
         color: backgroundColor ?? Theme.of(context).cardColor,
       ),
-      child: child ?? SizedBox.shrink(),
+      child: child ?? const SizedBox.shrink(),
     );
   }
 }

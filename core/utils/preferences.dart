@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Preferences {
@@ -10,6 +9,5 @@ class Preferences {
 
   String? get token => shared.getString("token");
 
-  static Future<Preferences> instance() =>
-      SharedPreferences.getInstance().then((value) => Preferences(value));
+  static Future<Preferences> instance() => SharedPreferences.getInstance().then((value) => Preferences(value));
 }
