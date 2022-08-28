@@ -32,17 +32,7 @@ class CustomImage extends StatelessWidget {
       onTap: () {
         if (zoomOnTap ?? false) {
           ZoomDialog(
-            child: CustomImage(
-              url: url,
-              boxShape: boxShape,
-              borderRadius: borderRadius,
-              errorAssets: errorAssets,
-              fit: fit,
-              height: height,
-              width: width,
-              showBlackGradient: false,
-              zoomOnTap: false,
-            ),
+            child: CustomImage(url: url, boxShape: boxShape, borderRadius: borderRadius, errorAssets: errorAssets, fit: fit, height: height, width: width, showBlackGradient: false, zoomOnTap: false),
           ).show(context);
         }
       },
