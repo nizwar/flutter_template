@@ -45,6 +45,6 @@ class ShimmerContainer extends StatelessWidget {
   const ShimmerContainer({Key? key, this.child}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Shimmer.fromColors(baseColor: Colors.grey.shade200, child: child!, highlightColor: Colors.grey.shade100);
+    return Shimmer.fromColors(baseColor: Colors.grey.shade200, highlightColor: Colors.grey.shade100, child: child!);
   }
 }

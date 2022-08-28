@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tv_online/core/resources/colors.dart';
 import 'core/providers/globals/user_provider.dart';
 import 'ui/screens/main_screen.dart';
 
@@ -9,9 +10,17 @@ main() {
       providers: [
         ChangeNotifierProvider(create: (context) => UserProvider()),
       ],
-      child: const MaterialApp(
+      child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: Root(),
+        theme: ThemeData.light().copyWith(
+          primaryColor: primaryColor,
+          colorScheme: const ColorScheme.light(primary: primaryColor, secondary: secondary),
+        ),
+        darkTheme: ThemeData.dark().copyWith(
+          primaryColor: primaryColor,
+          colorScheme: const ColorScheme.dark(primary: primaryColor, secondary: secondary),
+        ),
+        home: const Root(),
       ),
     ),
   );
