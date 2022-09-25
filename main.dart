@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tv_online/core/resources/colors.dart';
 import 'core/providers/globals/user_provider.dart';
+import 'core/resources/colors.dart';
 import 'ui/screens/main_screen.dart';
 
 main() {
