@@ -1,35 +1,55 @@
+import 'dart:async';
+
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'core/providers/globals/theme_provider.dart';
+import 'firebase_options.dart';
 import 'package:provider/provider.dart';
 import 'core/providers/globals/user_provider.dart';
-import 'core/resources/colors.dart';
 import 'ui/screens/main_screen.dart';
+import 'ui/screens/splash_screen.dart';
 
-main() {
-  return runApp(
-    MultiProvider(
+main() async {
+  await Firebase.initializeApp(
+    name: defaultFirebaseAppName,
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  return runZonedGuarded(() async {
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+    FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(!kDebugMode);
+
+    return runApp(const Application());
+  }, FirebaseCrashlytics.instance.recordError);
+}
+
+class Application extends StatelessWidget {
+  const Application({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
       child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(
-          primaryColor: primaryColor,
-          colorScheme: const ColorScheme.light(primary: primaryColor, secondary: secondary),
-        ),
-        darkTheme: ThemeData.dark().copyWith(
-          primaryColor: primaryColor,
-          colorScheme: const ColorScheme.dark(primary: primaryColor, secondary: secondary),
-        ),
+        title: 'App title',
+        themeMode: context.watch<ThemeProvider>().themeMode,
         home: const Root(),
       ),
-    ),
-  );
+    );
+  }
 }
 
 class Root extends StatefulWidget {
   const Root({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _RootState createState() => _RootState();
 }
 
@@ -46,16 +66,5 @@ class _RootState extends State<Root> {
   @override
   Widget build(BuildContext context) {
     return _ready ? const MainScreen() : const SplashScreen();
-  }
-}
-
-///Splash screen to show on root!
-///Use this if you got something to do and make some delay or loading when app is open
-class SplashScreen extends StatelessWidget {
-  const SplashScreen({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold();
   }
 }

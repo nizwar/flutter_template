@@ -9,7 +9,18 @@ Before we start, Use these plugins to make sure everything's setup!
   cached_network_image: any
   shared_preferences: any
   ndialog: any
+
+  #I do realized post bugs monitor is the most important once developing apps, 
+  firebase_core: any
+  firebase_analytics: any
+  firebase_crashlytics: any
+  firebase_performance: any
 ``` 
+
+Run `flutter pub upgrade --null-safety` to fetch all newest plugin versions.
+
+Run `flutterfire configure` to initialize Firebase project (Make sure to change package name first)
+
 ## Widget Things!
 ### Custom Divider
 You can use `ColumnDivider` and `RowDivider` to make distance between Widgets, default space = 10 (you can change it on customDivider.dart)
