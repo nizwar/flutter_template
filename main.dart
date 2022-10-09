@@ -4,6 +4,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'core/providers/globals/theme_provider.dart';
+import 'core/resources/themes.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
 import 'core/providers/globals/user_provider.dart';
@@ -37,6 +38,9 @@ class Application extends StatelessWidget {
       child: MaterialApp(
         title: 'App title',
         themeMode: context.watch<ThemeProvider>().themeMode,
+        debugShowCheckedModeBanner: false,
+        theme: lightThemeData,
+        darkTheme: darkThemeData,
         home: const Root(),
       ),
     );
