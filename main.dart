@@ -12,6 +12,7 @@ import 'ui/screens/main_screen.dart';
 import 'ui/screens/splash_screen.dart';
 
 main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     name: defaultFirebaseAppName,
     options: DefaultFirebaseOptions.currentPlatform,
@@ -35,7 +36,7 @@ class Application extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
-      child: MaterialApp(
+      builder: (context, child) => MaterialApp(
         title: 'App title',
         themeMode: context.watch<ThemeProvider>().themeMode,
         debugShowCheckedModeBanner: false,

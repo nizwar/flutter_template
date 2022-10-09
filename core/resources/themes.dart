@@ -12,7 +12,7 @@ ThemeData get lightThemeData => ThemeData.light().copyWith(
       ),
       colorScheme: const ColorScheme.light().copyWith(
         primary: primaryColor,
-        secondary: secondary,
+        secondary: secondaryColor,
         surface: Colors.white,
       ),
     );
@@ -28,7 +28,7 @@ ThemeData get darkThemeData => ThemeData.dark().copyWith(
       scaffoldBackgroundColor: darkBackground,
       colorScheme: const ColorScheme.light().copyWith(
         primary: darkPrimaryColor,
-        secondary: secondary,
+        secondary: secondaryColor,
         surface: Colors.grey.shade800,
       ),
     );

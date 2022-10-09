@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 ///Build your own colors here!
 
 const Color primaryColor = Color(0xff3F8A79);
-const Color secondary = Color(0xff64B18C);
+const Color secondaryColor = Color(0xff64B18C);
 Color get shadowColor => Colors.black.withOpacity(.05);
 
 const Color lightPrimaryColor = primaryColor;
