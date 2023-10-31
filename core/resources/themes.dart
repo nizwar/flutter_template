@@ -7,7 +7,7 @@ ThemeData get lightThemeData => ThemeData.light().copyWith(
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           shape: const RoundedRectangleBorder(),
-          foregroundColor: ThemeData.light().textTheme.button!.color,
+          foregroundColor: ThemeData.light().textTheme.labelLarge!.color,
         ),
       ),
       colorScheme: const ColorScheme.light().copyWith(
@@ -22,7 +22,7 @@ ThemeData get darkThemeData => ThemeData.dark().copyWith(
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           shape: const RoundedRectangleBorder(),
-          foregroundColor: ThemeData.dark().textTheme.button!.color,
+          foregroundColor: ThemeData.dark().textTheme.labelLarge!.color,
         ),
       ),
       scaffoldBackgroundColor: darkBackground,
@@ -32,3 +32,7 @@ ThemeData get darkThemeData => ThemeData.dark().copyWith(
         surface: Colors.grey.shade800,
       ),
     );
+
+ThemeData theme(BuildContext context) => Theme.of(context);
+TextTheme textTheme(BuildContext context) => Theme.of(context).textTheme;
+ColorScheme colorScheme(BuildContext context) => Theme.of(context).colorScheme;
