@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:igenyes_ferfi_app/ui/components/adaptive_progress_indicator.dart';
 import 'package:ndialog/ndialog.dart';
+
+import '../../ui/components/adaptive_progress_indicator.dart';
 
 extension KeyboardDismisser on Widget {
   Widget dismissKeyboardOnTap(BuildContext context) {
