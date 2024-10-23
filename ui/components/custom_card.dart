@@ -12,7 +12,7 @@ class CustomCard extends StatelessWidget {
   final bool? showOnOverflow;
 
   const CustomCard({
-    Key? key,
+    super.key,
     this.borderRadius,
     this.child,
     this.boxShadow,
@@ -20,7 +20,7 @@ class CustomCard extends StatelessWidget {
     this.margin,
     this.padding,
     this.showOnOverflow,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

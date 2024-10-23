@@ -15,7 +15,7 @@ class CustomImage extends StatelessWidget {
   final BoxShape? boxShape;
 
   const CustomImage({
-    Key? key,
+    super.key,
     @required this.url,
     this.width,
     this.height,
@@ -25,7 +25,7 @@ class CustomImage extends StatelessWidget {
     this.zoomOnTap = false,
     this.showBlackGradient = false,
     this.boxShape,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

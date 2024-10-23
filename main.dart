@@ -49,7 +49,7 @@ class Application extends StatelessWidget {
 }
 
 class Root extends StatefulWidget {
-  const Root({Key? key}) : super(key: key);
+  const Root({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
