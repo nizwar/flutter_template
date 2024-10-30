@@ -79,7 +79,7 @@ abstract class HttpConnection {
   ///
   ///for an Example :
   Map<String, String>? _preRequestHeaders(Map<String, String>? headers) {
-    // var userProvider = UserProvider.of(context);
+    // var userProvider = UserProvider.read(context);
     // if (userProvider.token != null) {
     //   if (headers != null) {
     //     headers.addEntries([MapEntry("Access-Token", "Bearer ${userProvider.token!.accessToken}")]);

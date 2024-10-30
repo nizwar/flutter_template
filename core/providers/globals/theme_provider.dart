@@ -10,6 +10,6 @@ class ThemeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  static ThemeProvider of(BuildContext context) => context.read();
+  static ThemeProvider read(BuildContext context) => context.read();
   static ThemeData theme(BuildContext context) => Theme.of(context);
 }
