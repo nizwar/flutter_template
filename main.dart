@@ -40,8 +40,8 @@ class Application extends StatelessWidget {
         title: 'App title',
         themeMode: context.watch<ThemeProvider>().themeMode,
         debugShowCheckedModeBanner: false,
-        theme: lightThemeData,
-        darkTheme: darkThemeData,
+        theme: themeData(context, Brightness.light),
+        darkTheme: themeData(context, Brightness.dark),
         home: const Root(),
       ),
     );
