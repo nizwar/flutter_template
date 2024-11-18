@@ -14,5 +14,6 @@ class UserProvider extends ChangeNotifier {
     ///Do some logout here
   }
 
-  static UserProvider of(BuildContext context) => context.read();
+  static UserProvider read(BuildContext context) => context.read();
+  static UserProvider watch(BuildContext context) => context.watch();
 }

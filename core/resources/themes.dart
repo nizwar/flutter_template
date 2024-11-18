@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../providers/globals/theme_provider.dart';
+
 ThemeData themeData(BuildContext context, Brightness brightness) {
   var provider = themeProvider(context);
   var colorScheme = ColorScheme.fromSwatch(

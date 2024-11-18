@@ -2,8 +2,10 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../models/model.dart';
 import '../providers/globals/user_provider.dart';
+import '../resources/environment.dart';
 import '../utils/logger.dart';
 
 final globalDio = Dio(
@@ -85,14 +87,14 @@ abstract class HttpConnection {
   }
 
   Map<String, String>? _preRequestHeaders(Map<String, String>? headers) {
-    var userProvider = UserProvider.read(context);
-    if (userProvider.auth?.token != null) {
-      if (headers != null) {
-        headers.addEntries([MapEntry("Authorization", "Bearer ${userProvider.auth?.token}")]);
-      } else {
-        headers = {"Authorization": "Bearer ${userProvider.auth?.token}"};
-      }
-    }
+    // var userProvider = UserProvider.read(context);
+    // if (userProvider.auth?.token != null) {
+    //   if (headers != null) {
+    //     headers.addEntries([MapEntry("Authorization", "Bearer ${userProvider.auth?.token}")]);
+    //   } else {
+    //     headers = {"Authorization": "Bearer ${userProvider.auth?.token}"};
+    //   }
+    // }
     return headers;
   }
 
@@ -107,8 +109,8 @@ abstract class HttpConnection {
       if (response.data is Map<String, dynamic>) {
         try {
           ApiResponse respData = ApiResponse.fromJson(response.data);
-          elog("API - ${respData.status.toString()}");
-          throw HttpErrorConnection(status: respData.status.code, title: respData.status.title, message: respData.status.message);
+          elog("API - ${respData.message.toString()}");
+          throw HttpErrorConnection(status: response.statusCode ?? -1, title: "API Return Error", message: respData.message ?? "Not Available");
         } catch (_) {}
       }
       elog("Response Error - Code ${response.statusCode}, ${response.statusMessage!}, ${response.data}");
