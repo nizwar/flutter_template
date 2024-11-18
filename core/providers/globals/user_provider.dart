@@ -10,5 +10,9 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  static void logout(BuildContext context) {
+    ///Do some logout here
+  }
+
   static UserProvider of(BuildContext context) => context.read();
 }
