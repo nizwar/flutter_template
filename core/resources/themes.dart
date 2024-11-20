@@ -10,7 +10,6 @@ ThemeData themeData(BuildContext context, Brightness brightness) {
   );
 
   ThemeData output = ThemeData(
-    fontFamily: "ProductSans",
     useMaterial3: false,
     primarySwatch: themeProvider(context).colorSwatch,
     brightness: brightness,

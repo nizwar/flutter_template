@@ -8,8 +8,7 @@ class CustomCard extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
   final EdgeInsetsGeometry? padding;
   final BoxShadow? boxShadow;
-  final Widget? child;
-  final bool? showOnOverflow;
+  final Widget? child; 
 
   const CustomCard({
     super.key,
@@ -18,8 +17,7 @@ class CustomCard extends StatelessWidget {
     this.boxShadow,
     this.backgroundColor,
     this.margin,
-    this.padding,
-    this.showOnOverflow,
+    this.padding, 
   });
 
   @override
@@ -27,7 +25,7 @@ class CustomCard extends StatelessWidget {
     return Container(
       margin: margin ?? EdgeInsets.zero,
       padding: padding ?? EdgeInsets.zero,
-      clipBehavior: (showOnOverflow ?? true) ? Clip.none : Clip.antiAlias,
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         boxShadow: [boxShadow ?? BoxShadow(blurRadius: 5, color: shadowColor)],
         borderRadius: BorderRadius.circular(borderRadius ?? 10),
