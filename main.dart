@@ -18,12 +18,10 @@ main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  return runZonedGuarded(() async {
-    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-    FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(!kDebugMode);
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+  FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(!kDebugMode);
 
-    return runApp(const Application());
-  }, FirebaseCrashlytics.instance.recordError);
+  return runApp(const Application());
 }
 
 class Application extends StatelessWidget {
