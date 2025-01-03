@@ -66,6 +66,11 @@ State management is designed to optimize performance by preventing the unnecessa
 
 While the choice of state management approach is up to you, most projects commonly use Provider or BLoC. Regardless of the method you choose, ensure it is implemented correctly to maximize efficiency and maintainability.
 
+#### Standardize Access with Read and Watch
+No matter what state management solution you use, ensure you create quick and consistent ways to access your state management. Achieve this by adding Read and Watch static functions to every provider or state management class.
+
+For detailed explanations and examples, refer to the `core/providers/readme.md` file.
+
 ### Provider
 #### Where to put them
 There are two ways to organize your providers. To maintain an optimized and well-managed file structure, we categorize them into two types:
