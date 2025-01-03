@@ -3,11 +3,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'core/providers/globals/theme_provider.dart';
+import 'core/providers/theme_provider.dart';
 import 'core/resources/themes.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
-import 'core/providers/globals/user_provider.dart';
+import 'core/providers/user_provider.dart';
 import 'ui/screens/main_screen.dart';
 import 'ui/screens/splash_screen.dart';
 
@@ -50,11 +50,10 @@ class Root extends StatefulWidget {
   const Root({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _RootState createState() => _RootState();
+  RootState createState() => RootState();
 }
 
-class _RootState extends State<Root> {
+class RootState extends State<Root> {
   bool _ready = false;
 
   @override
