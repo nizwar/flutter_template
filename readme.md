@@ -1,94 +1,172 @@
-# NFlutter Template
-This project using NFlutter Template (https://github.com/nizwar/flutter_template.git) with NullSafety Support!
+# Flutter Boilerplate
 
-Before we start, Use these plugins to make sure everything's setup!
+## Setup
+Ensure everything is properly set up by using these recommended plugins!
+
+### Required Packages
 ```yaml
-  dio: any
-  provider: any
-  shimmer: any
-  cached_network_image: any
-  shared_preferences: any
-  ndialog: any
+  equatable: ^2.0.7
+  dio: ^5.7.0
+  provider: ^6.1.2
+  shimmer: ^3.0.0
+  cached_network_image: ^3.4.1
+  shared_preferences: ^2.3.5
+  ndialog: ^4.4.0
+  pull_to_refresh_flutter3: ^2.0.2
 
-  #I do realized post bugs monitor is the most important once developing apps, 
-  firebase_core: any
-  firebase_analytics: any
-  firebase_crashlytics: any
-  firebase_performance: any
+  firebase_core: ^3.9.0
+  firebase_analytics: ^11.3.6
+  firebase_crashlytics: ^4.2.0
+  firebase_performance: ^0.10.0
 ``` 
 
-Run `flutter pub upgrade --null-safety` to fetch all newest plugin versions.
+### Firebase Setup
 
-Run `flutterfire configure` to initialize Firebase project (Make sure to change package name first)
+Before running this command, ensure that you have updated the package name (for Android) and bundle ID (for iOS) to match your project.
 
-## Widget Things!
+Run the following command to initialize your Firebase project:
+
+```sh 
+flutterfire configure
+```
+
+## Resources
+The `lib/core/resources` directory contains various resources that are fundamental to the project. These include:
+### Colors
+Defines the color palette for the application. Centralizing colors here ensures consistency throughout the app and makes it easy to update or modify them as needed.
+### Styles
+Contains custom input box decorations, button styles, and other reusable UI components. This centralization simplifies maintaining a consistent design language across the application.
+### Themes
+Manages the application's themes, such as ThemeData for light and dark modes. It ensures seamless transitions between themes and makes it easier to implement global UI changes.
+
+#### `USE THEME FEATURE, DO NOT HARDCODE THE COLORS` 
+Avoid hardcoding colors in your widgets. Instead, leverage the theme's ColorScheme or ThemeData to ensure consistency and adaptability across the application.
+
+To simplify access to theme-related properties, the following utility functions are provided:
+
+* Retrieves the current ThemeData for the application
+```dart 
+ThemeData currentTheme = theme(context);
+ ```
+* Fetches the TextTheme from the current theme, enabling easy styling for text elements. 
+```dart
+TextTheme currentTextTheme = textTheme(context);
+```
+* Accesses the ColorScheme from the current theme
+```dart 
+ColorScheme currentColorScheme = colorScheme(context);
+ ```
+
+### Environment
+
+Stores environment-specific data, such as API endpoints, configuration variables, or keys. This allows for easier management of environment-based settings (e.g., development, staging, production).
+
+## State Management
+State management is designed to optimize performance by preventing the unnecessary re-rendering of an entire screen when only a single widget needs to be updated.
+
+While the choice of state management approach is up to you, most projects commonly use Provider or BLoC. Regardless of the method you choose, ensure it is implemented correctly to maximize efficiency and maintainability.
+
+### Provider
+#### Where to put them
+There are two ways to organize your providers. To maintain an optimized and well-managed file structure, we categorize them into two types:
+
+##### 1. Global Provider
+Global providers are used for managing data or state that needs to be accessed across the entire project.
+
+Example:
+
+1. `UserProvider`: Manages user-related data, such as authentication status, and makes it accessible throughout the app.
+2. `ThemeProvider`: Allows you to manage themes, such as changing the ThemeMode or ColorSeed. When updated, the entire UI will automatically reflect the changes.
+
+Storage Location: `lib/core/providers/`
+
+##### 2. Local Provider
+Local providers are used specifically within the widget you're currently working on.
+
+Example: Screen with a Form
+Local providers can be implemented in two ways:
+
+* `Single Provider`: Store the provider in the same file as the widget.
+* `Multiple Providers`: Create a providers folder at the same directory level as the widget and store the relevant providers there.
+
+### BLoC
+
+## Flavours
+
+## Widget Utilities
+Simplify your works with these Widgets
+
 ### Custom Divider
-You can use `ColumnDivider` and `RowDivider` to make distance between Widgets, default space = 10 (you can change it on customDivider.dart)
+Utilize `ColumnDivider` and `RowDivider` to create spacing between widgets. The default spacing is set to 10, but you can modify it in `ui/components/custom_divider.dart`.
 
-### Shimmer
-We got `ShimmerObject`, `ShimmeringObject`, `ShimmerContainer`, you need to group your `ShimmerObjects` / or another object using `ShimmerContainer` to make it Shimmer, if you want to directly make a shimmering object, use `ShimmeringObject`.
+### Shimmer Effects
+Our shimmer utilities include `ShimmerObject`, `ShimmeringObject`, and `ShimmerContainer`. 
+
+#### To implement shimmer effects:
+
+Use `ShimmerContainer` to group your `ShimmerObjects` or any other widgets.
+For standalone shimmering widgets, opt for `ShimmeringObject`.
 
 ### Custom Image
-Just simple image widget using `cached_network_image`, you can call it easily using `CustomImage`!
+The `CustomImage` widget simplifies the process of displaying images using `cached_network_image`. It provides an easy and efficient solution for handling images.
 
 ### Custom Card
-Need more shadow from regular `Card`? use `CustomCard`!
+Need enhanced shadow effects compared to the default Card widget? Use CustomCard for a more visually appealing result.
 
-## Another Things!
+
+## Function Utilities
 ### HttpConnection
-`HttpConnection` is an Abstract Class, you need to extends to use it, but don't worry, it much easier than you think, let me give you an example codes here!
+HttpConnection is an abstract class that simplifies HTTP communication. Extend this class to utilize its features. Here’s a quick example:
 
 ```dart
     class UserHttp extends HttpConnection{
-        // We store context to HttpConnection so we can show
-        // Dialog, Reach Providers (i recommended to store it into 
-        // HttpConnection, so you can reach providers in every 
-        //extended class), etc.
+        // The context is passed to the HttpConnection constructor,
+        // providers, or any data that require context to access.
         UserHttp(BuildContext context) : super(context);
 
-        //Lets make login function
+        // Example: Login function
         Future<User> login({String username, String password}) async {
-            //post is came from HttpConnection's Function
+            // The 'post' method is inherited from HttpConnection
             var resp = await post<ApiResponse>(endpoint + "/login", body:{"username": username, "password": password});
 
-            //ApiResponse is my template Models (you can custom with yours in https/httpConnection.dart).
-            //e.g in this case, my api response will show like this
-            //{
-            //  success : true,
-            //  message : "Success",
-            //  data : {"name" : "nizwar", blablablabla},
-            //}
-            //so look at ApiResponse on https/httpConnection.dart
-
-            //Simple validation, if it true, return with data
+            // ApiResponse is a custom model defined in https/httpConnection.dart.
+            // Example API response:
+            // {
+            //   success: true,
+            //   message: "Success",
+            //   data: {"name": "nizwar", ...},
+            // }
+            
             if(resp.success) return User.fromJson(resp.data);            
-
             return null;
         }
     }
 ```
 
 ### Preferences
-`Preferences` is a simple class to help you manage SharedPreferences.
+The `Preferences` class simplifies the management of SharedPreferences.
 
 ```dart
     Future initData() async {
         Preferences pref = await Preferences.instance();
-        //Look at utils/preferences.dart
-        //You'll find token and saveToken function to store Token to SharedPreferences
-        //on 'set' function, you can write this
+
+        // Save a token
         pref.token = "XXXX";
 
-        //on 'void' function, you can write this
+        // Alternatively, use a dedicated save function
         pref.saveToken("XXXX");
 
-        //to get the token simply use this
+        // Retrieve the token
         String token = pref.token;
     }
 ```
 
 ### Navigations
-Don't waste your time to show the screen by writing `Navigator.push(context, MaterialPageRoute (builder: blablabla))`, now you can easily use `startScreen()` or `replaceScreen()`, and simply close it by `closeScreen()`
+Simplify navigation with the following functions:
+
+* `startScreen(context, YourScreen())` : Open a new screen.
+* `replaceScreen(context, YourScreen())` : Replace the current screen with a new one.
+* `closeScreen(context)` : Close the current screen.
 
 ```dart
     startScreen(context, YourScreen());
@@ -96,5 +174,8 @@ Don't waste your time to show the screen by writing `Navigator.push(context, Mat
     closeScreen(context);
 ```
 
-Okay that's it, I'll update this repo if i found something!, 
-By the way, Feel free to contribute and show the world your style!
+
+## Deploying
+### Automation
+#### Android
+#### iOS
