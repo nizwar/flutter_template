@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../providers/globals/theme_provider.dart';
+import '../providers/theme_provider.dart';
 
 ThemeData themeData(BuildContext context, Brightness brightness) {
   var provider = themeProvider(context);
@@ -10,7 +10,7 @@ ThemeData themeData(BuildContext context, Brightness brightness) {
   );
 
   ThemeData output = ThemeData(
-    useMaterial3: false,
+    useMaterial3: true,
     primarySwatch: themeProvider(context).colorSwatch,
     brightness: brightness,
   );
