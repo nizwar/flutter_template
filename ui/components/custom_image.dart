@@ -56,15 +56,21 @@ class CustomImage extends StatelessWidget {
                 alignment: Alignment.center,
                 child: ShimmeringObject(radius: borderRadius ?? BorderRadius.circular(0.0)),
               ),
-              errorWidget: (context, string, obj) => Image.asset(
-                errorAssets ?? "assets/images/nothumb.webp",
-                fit: BoxFit.cover,
-              ),
+
+              ///TODO: Change no image placeholder here
+              errorWidget: (context, string, obj) {
+                if (errorAssets == null) return Center(child: Icon(Icons.error_outline));
+                return Image.asset(
+                  errorAssets!,
+                  fit: BoxFit.cover,
+                );
+              },
             ),
             if (showBlackGradient)
               Container(
                 decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: [Colors.black.withOpacity(.5), Colors.transparent, Colors.black.withOpacity(.5)], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+                    gradient:
+                        LinearGradient(colors: [Colors.black.withValues(alpha: .5), Colors.transparent, Colors.black.withValues(alpha: .5)], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
               )
           ],
         ),
