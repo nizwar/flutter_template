@@ -4,29 +4,33 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/model.dart';
-import '../providers/globals/user_provider.dart';
-import '../resources/environment.dart';
+import '../providers/user_provider.dart';
+import '../resources/environment.dart' as env;
 import '../utils/logger.dart';
-
-final globalDio = Dio(
-  BaseOptions(
-    baseUrl: endpoint,
-    headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
-  ),
-);
+ 
 
 abstract class HttpConnection {
   final BuildContext context;
+  late Dio dio;
 
-  Dio get _dio => globalDio;
+  late String _baseUrl;
+  String get baseUrl => _baseUrl;
 
-  HttpConnection(this.context);
+  void updateBaseUrl(String url) {
+    _baseUrl = url;
+    dio.options.baseUrl = url;
+  }
+
+  HttpConnection(this.context, {String baseUrl = env.endpoint}) {
+    _baseUrl = baseUrl;
+    dio = Dio(BaseOptions(baseUrl: baseUrl, headers: {"Content-Type": "application/json"}));
+  }
 
   ///if pure == true, it will return data without parse it to ApiResponse
   Future get(String url, {Map<String, String>? params, dynamic headers, bool pure = false}) async {
     try {
       headers = _preRequestHeaders(headers);
-      var resp = await _dio.get(url + paramsToString(params), options: Options(headers: headers));
+      var resp = await dio.get(url + paramsToString(params), options: Options(headers: headers));
       if (!_postRequestHeaders(resp)) return;
       if (pure) return resp.data;
       if (resp.data != null) {
@@ -42,7 +46,7 @@ abstract class HttpConnection {
   Future post(String url, {Map<String, String>? params, dynamic body, dynamic headers, bool pure = false}) async {
     try {
       headers = _preRequestHeaders(headers);
-      var resp = await _dio.post(url + paramsToString(params), data: body, options: Options(headers: headers));
+      var resp = await dio.post(url + paramsToString(params), data: body, options: Options(headers: headers));
       if (!_postRequestHeaders(resp)) return;
       if (pure) return resp.data;
       if (resp.data != null) {
@@ -58,7 +62,7 @@ abstract class HttpConnection {
   Future put(String url, {Map<String, String>? params, dynamic body, dynamic headers, bool pure = false}) async {
     try {
       headers = _preRequestHeaders(headers);
-      var resp = await _dio.put(url + paramsToString(params), data: body, options: Options(headers: headers));
+      var resp = await dio.put(url + paramsToString(params), data: body, options: Options(headers: headers));
       if (!_postRequestHeaders(resp)) return;
       if (pure) return resp.data;
       if (resp.data != null) {
@@ -74,7 +78,7 @@ abstract class HttpConnection {
   Future delete(String url, {Map<String, String>? params, dynamic body, dynamic headers, bool pure = false}) async {
     try {
       headers = _preRequestHeaders(headers);
-      var resp = await _dio.delete(url + paramsToString(params), data: body, options: Options(headers: headers));
+      var resp = await dio.delete(url + paramsToString(params), data: body, options: Options(headers: headers));
       if (!_postRequestHeaders(resp)) return;
       if (pure) return resp.data;
       if (resp.data != null) {
@@ -180,9 +184,9 @@ class ApiResponse<T> extends Model {
     this.data,
   });
 
-  bool? success;
-  String? message;
-  T? data;
+  final bool? success;
+  final String? message;
+  final T? data;
 
   factory ApiResponse.fromJson(Map<String, dynamic> json) => ApiResponse(
         success: json["success"],
