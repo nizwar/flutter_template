@@ -95,8 +95,22 @@ Local providers can be implemented in two ways:
 * `Multiple Providers`: Create a providers folder at the same directory level as the widget and store the relevant providers there.
 
 ### BLoC
+The BLoC (Business Logic Component) pattern separates the application's business logic from its UI, making it more maintainable and testable. It uses Streams to manage state and ensures a reactive, event-driven architecture.
 
-## Flavours
+#### Where to Put Them
+
+Refer to the Provider's Description for guidance on where to place BLoC files. Similar to Providers, BLoC files can be categorized as either Global or Local, depending on their scope and usage.
+
+#### 1. Global BLoC
+Used for state and logic that needs to be shared across the entire application.
+Typically stored in `lib/core/bloc/`.
+Example: AuthBloc or ThemeBloc to manage authentication or theming across the app.
+
+#### 2. Local BLoC
+Used for state and logic specific to a particular screen or widget.
+Stored in the same file as the widget or in a dedicated bloc folder at the same level as the widget.
+
+Example: `FormBloc` for managing a specific form's state.
 
 ## Widget Utilities
 Simplify your works with these Widgets
@@ -118,8 +132,55 @@ The `CustomImage` widget simplifies the process of displaying images using `cach
 ### Custom Card
 Need enhanced shadow effects compared to the default Card widget? Use CustomCard for a more visually appealing result.
 
+### Paginator Page
+The Paginator Page widget provides a quick and efficient way to implement paginated lists in your application. It simplifies handling pagination with minimal configuration and allows seamless integration with API responses.
 
-## Function Utilities
+#### Features:
+- `future`: A function that returns a `List` of the specified type, with pagination controlled by the page and limit parameters.
+- `itemBuilder`: A builder function that customizes each list item, utilizing index and T item to define the UI for each data entry.
+- `emptyBuilder`: A widget builder displayed when the list is empty.
+- `loadingBuilder`: A widget builder shown during initial loading or when a refresh is triggered.
+- `limit`: Specifies the number of items per page. This value is passed to the future function for pagination.
+- `prefixChildren`: A list of widgets displayed before the paginated data items, useful for adding headers or introductory content.
+- `padding`: Configures the padding around the list for proper layout and spacing.
+- `paginated`: A flag indicating whether the list supports pagination. If false, no pull-to-refresh or load-more functionality will be enabled.
+- `refreshController`: A controller that manages refresh and load-more actions to handle user interactions with the paginated list.
+
+#### Example:
+```dart 
+PaginatorPage<String>(
+  future: (page, limit) async {
+    // Example API call that returns a paginated list of items.
+    return await fetchData(page: page, limit: limit); 
+  },
+  itemBuilder: (context, index, item) {
+    // Custom item builder for the list.
+    return ListTile(
+      title: Text(item),
+    );
+  },
+  emptyBuilder: (context) {
+    return Center(child: Text("No items found."));
+  },
+  loadingBuilder: (context) {
+    return Center(child: CircularProgressIndicator());
+  },
+  limit: 10, // Number of items per page
+  prefixChildren: [
+    Padding(
+      padding: EdgeInsets.all(8),
+      child: Text("Paginated List"),
+    ),
+  ],
+  padding: EdgeInsets.all(8),
+  paginated: true,
+  refreshController: RefreshController(initialRefresh: false),
+)
+```
+
+This widget abstracts the pagination logic, making it easier to integrate paginated data while maintaining customization flexibility for different use cases.
+
+## Function & Utilities
 ### HttpConnection
 HttpConnection is an abstract class that simplifies HTTP communication. Extend this class to utilize its features. Here’s a quick example:
 
@@ -178,9 +239,3 @@ Simplify navigation with the following functions:
     replaceScreen(context, YourScreen());
     closeScreen(context);
 ```
-
-
-## Deploying
-### Automation
-#### Android
-#### iOS

@@ -1,0 +1,2 @@
+# Screens
+A screen represents the main user interface that is displayed to the user. Every screen should start with a Scaffold widget as its base structure, which provides the framework for implementing app bars, drawers, floating action buttons, and more.
