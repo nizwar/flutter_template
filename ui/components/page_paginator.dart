@@ -5,28 +5,48 @@ import '../../core/resources/themes.dart';
 import 'adaptive_progress_indicator.dart';
 
 class PaginatorPage<T> extends StatefulWidget {
+  ///A function that returns a `List` of the specified type, utilizing the `page` and `limit` parameters for pagination.
   final int limit;
+
+  ///A flag indicating whether the list supports pagination. If set to `false`, the list will not load more items when scrolled to the bottom.
   final bool paginated;
+
+  ///A list of widgets displayed before the paginated data items, useful for adding headers or introductory content.
   final List<Widget> prefixChildren;
+
+  ///A function that returns a `List` of the specified type, utilizing the `page` and `limit` parameters for pagination.
   final Future<List<T>> Function(int page, int limit) future;
-  final Widget Function(int index, T item) itemBuilder;
-  final Widget Function(BuildContext context)? emptyBuilder;
-  final Widget Function(BuildContext context)? loadingBuilder;
+
+  ///A builder function for customizing each list item. It provides access to `index` and `T item`, allowing you to fully customize the UI for each data entry.
+  final Widget Function(int index, T item, RefreshController refreshController) itemBuilder;
+
+  ///A widget builder displayed when the list contains no data.
+  final Widget Function(BuildContext context, RefreshController refreshController)? emptyBuilder;
+
+  ///A widget builder displayed during the initial loading process or when a refresh is triggered.
+  final Widget Function(BuildContext context, RefreshController refreshController)? loadingBuilder;
+
+  ///Configures padding around the list for proper spacing and layout.
   final EdgeInsets? padding;
 
-  ///Magic class to paginate every api
+  final RefreshController? refreshController;
+
+  /// A versatile class to handle API pagination with ease.
   ///
-  ///`future` = return as List of Type, with builder for the pagination `page` and `limit`
-  ///
-  ///`limit` = it will pass to `future` as `limit`
-  ///
-  ///`prefixChildren` = List of widget that will shows and included before items of data
-  ///
-  ///`padding` = Set list padding
+  /// - `future`: A function that returns a `List` of the specified type, utilizing the `page` and `limit` parameters for pagination.
+  /// - `itemBuilder`: A builder function for customizing each list item. It provides access to `index` and `T item`, allowing you to fully customize the UI for each data entry.
+  /// - `emptyBuilder`: A widget builder displayed when the list contains no data.
+  /// - `loadingBuilder`: A widget builder displayed during the initial loading process or when a refresh is triggered.
+  /// - `limit`: Specifies the maximum number of items per page. This value is passed to the `future` function for pagination.
+  /// - `prefixChildren`: A list of widgets displayed before the paginated data items, useful for adding headers or introductory content.
+  /// - `padding`: Configures padding around the list for proper spacing and layout.
+  /// - `paginated`: A flag indicating whether the list supports pagination. If set to `false`, the list will not load more items when scrolled to the bottom.
+  /// - `refreshController`: A controller used to manage refresh and load-more actions, ensuring seamless user interactions and API requests.
   const PaginatorPage({
     super.key,
     required this.future,
     required this.itemBuilder,
+    this.refreshController,
     this.paginated = true,
     this.prefixChildren = const [],
     this.limit = 10,
@@ -43,10 +63,11 @@ class PaginatorPageState<T> extends State<PaginatorPage<T>> with AutomaticKeepAl
   final List<T> data = [];
   int _page = 1;
   bool loading = true;
-  final RefreshController refreshController = RefreshController();
+  late RefreshController refreshController;
 
   @override
   void initState() {
+    refreshController = widget.refreshController ?? RefreshController();
     loadData(true);
     super.initState();
   }
@@ -69,13 +90,13 @@ class PaginatorPageState<T> extends State<PaginatorPage<T>> with AutomaticKeepAl
     );
 
     if (widget.loadingBuilder != null && loading) {
-      body = widget.loadingBuilder!.call(context);
+      body = widget.loadingBuilder!.call(context, refreshController);
     }
 
     if (!loading) {
       if (data.isEmpty) {
         if (widget.emptyBuilder != null) {
-          body = widget.emptyBuilder!.call(context);
+          body = widget.emptyBuilder!.call(context, refreshController);
         } else {
           body = SingleChildScrollView(
             padding: widget.padding ?? EdgeInsets.all(10).copyWith(bottom: 120),
@@ -91,7 +112,7 @@ class PaginatorPageState<T> extends State<PaginatorPage<T>> with AutomaticKeepAl
           padding: widget.padding ?? EdgeInsets.all(10).copyWith(bottom: 120),
           children: [
             ...widget.prefixChildren,
-            ...List.generate(data.length, (index) => widget.itemBuilder.call(index, data[index])),
+            ...List.generate(data.length, (index) => widget.itemBuilder.call(index, data[index], refreshController)),
           ],
         );
       }
