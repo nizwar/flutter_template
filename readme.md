@@ -1,4 +1,20 @@
-# Flutter Boilerplate
+# Maxximum Flutter's Guidance
+
+## BIG RULES
+
+#### 1. Clean your warnings and clean your mind!
+Do not use deprecated or unused imports, and avoid anything that clutters the warning list.
+
+#### 2. Keep Updated
+Spend 1-2 hours updating the project with the latest SDK, packages, and all. You might encounter some problems while doing it. Don't be silent... discuss them!
+
+#### 3. Use Dev Tools like a Dev!
+1. Watch your widget tree; don't make it like Rocket Science! Keep it clean and efficient.
+2. Do not record network connections and print them on the Debug Console. Flutter has its own Dev Tools. Use them!
+3. Monitor memory usage. You might need to compress some assets to avoid crashes due to memory overload. And yes, images with high resolution will crash the app.
+
+#### 4. Use and Modify
+You can modify the boilerplate as per application requirements, but ensure it remains in the same structure so all of us will be on the same page.
 
 ## Setup
 Ensure everything is properly set up by using these recommended plugins!
@@ -29,6 +45,28 @@ Run the following command to initialize your Firebase project:
 ```sh 
 flutterfire configure
 ```
+### App Configuration
+
+The `AppConfig` class is used to manage environment-specific configurations for the application. It includes properties such as the application name, API endpoint, and primary color. This allows for easy switching between different environments (e.g., development, production) without changing the core application code.
+
+#### Example Usage:
+
+```dart
+import 'package:boilerplate/core/utils/app_config.dart';
+import 'package:flutter/material.dart';
+
+/// Development mode configuration.
+class DevelopmentMode extends AppConfig {
+  DevelopmentMode() : super(appName: 'App title', endpoint: 'https://api.dev.com', color: Colors.blue);
+}
+
+/// Production mode configuration.
+class ProductionMode extends AppConfig {
+  ProductionMode() : super(appName: 'App title', endpoint: 'https://api.prod.com', color: Colors.green);
+}
+```
+
+You can easily switch the config by calling `AppConfig.switchConfig(context, YOUR_CONFIG)`
 
 ## Resources
 The `lib/core/resources` directory contains various resources that are fundamental to the project. These include:
