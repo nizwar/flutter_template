@@ -1,6 +1,5 @@
+import 'package:boilerplate/core/resources/themes.dart';
 import 'package:flutter/material.dart';
-
-import '../../core/resources/colors.dart';
 
 class CustomCard extends StatelessWidget {
   final double? borderRadius;
@@ -8,7 +7,7 @@ class CustomCard extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
   final EdgeInsetsGeometry? padding;
   final BoxShadow? boxShadow;
-  final Widget? child; 
+  final Widget? child;
 
   const CustomCard({
     super.key,
@@ -17,7 +16,7 @@ class CustomCard extends StatelessWidget {
     this.boxShadow,
     this.backgroundColor,
     this.margin,
-    this.padding, 
+    this.padding,
   });
 
   @override
@@ -27,7 +26,7 @@ class CustomCard extends StatelessWidget {
       padding: padding ?? EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        boxShadow: [boxShadow ?? BoxShadow(blurRadius: 5, color: shadowColor)],
+        boxShadow: [boxShadow ?? BoxShadow(blurRadius: 5, color: theme(context).shadowColor)],
         borderRadius: BorderRadius.circular(borderRadius ?? 10),
         color: backgroundColor ?? Theme.of(context).cardColor,
       ),
