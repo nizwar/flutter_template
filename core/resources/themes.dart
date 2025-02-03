@@ -1,20 +1,11 @@
 import 'package:flutter/material.dart';
-
 import '../providers/theme_provider.dart';
 
+/// A custom extension on [BuildContext] to provide custom theme provider.
 ThemeData themeData(BuildContext context, Brightness brightness) {
-  var provider = themeProvider(context);
-  var colorScheme = ColorScheme.fromSwatch(
-    primarySwatch: provider.colorSwatch,
-    brightness: brightness,
-  );
-
-  ThemeData output = ThemeData(
-    useMaterial3: true,
-    primarySwatch: themeProvider(context).colorSwatch,
-    brightness: brightness,
-  );
-
+  ThemeProvider provider = themeProvider(context);
+  ColorScheme colorScheme = ColorScheme.fromSwatch(primarySwatch: provider.colorSwatch, brightness: brightness);
+  ThemeData output = ThemeData(useMaterial3: true, primarySwatch: themeProvider(context).colorSwatch, brightness: brightness);
   Color scaffoldBackground = brightness == Brightness.light ? Colors.white : Colors.grey.shade900;
 
   return output.copyWith(
@@ -50,12 +41,7 @@ ThemeData themeData(BuildContext context, Brightness brightness) {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
       ),
     ),
-    textButtonTheme: TextButtonThemeData(
-      style: TextButton.styleFrom(
-        shape: const RoundedRectangleBorder(),
-        foregroundColor: colorScheme.onPrimary,
-      ),
-    ),
+    textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(shape: const RoundedRectangleBorder(), foregroundColor: colorScheme.onPrimary)),
   );
 }
 
