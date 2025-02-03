@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 
 ///Build your own colors here!
+///
+///
+/// A custom extension on [ThemeData] to provide custom color schemes.
+///
+/// as colorRedPrimary declared in the extension, you can call it in the code like this:
+/// ```dart
+/// theme(context).colorRedPrimary
+/// ```
+extension CustomColors on ThemeData {
+  ///Example of a custom color scheme,
+  ///You can add more custom color schemes here.
+  ///
+  ///Use brightness to determine the color scheme.
+  Color get colorRedPrimary => brightness == Brightness.light ? const Color(0xFFD32F2F) : const Color(0xFFB71C1C);
 
-const Color primaryColor = Color(0xff3F8A79);
-const Color secondaryColor = Color(0xff64B18C);
-Color get shadowColor => Colors.black.withValues(alpha: .05);
-
-const Color lightPrimaryColor = primaryColor;
-const Color darkPrimaryColor = primaryColor;
-
-const Color reactionBackground = Color(0xffF6F6F6);
-const Color standardWhite = Color(0xFFFFFDF9);
-
-const Color lightBackground = Color(0xffF5F6FA);
-const Color darkBackground = Color(0xff202020);
+  Color get shadowColor => Colors.black.withValues(alpha: .05);
+  Color get background => brightness == Brightness.light ? Color(0xffF5F6FA) : Color(0xff202020);
+}
