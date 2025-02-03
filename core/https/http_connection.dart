@@ -1,13 +1,9 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../models/model.dart';
 import '../providers/user_provider.dart';
-import '../resources/environment.dart' as env;
+import '../utils/app_config.dart';
 import '../utils/logger.dart';
- 
 
 abstract class HttpConnection {
   final BuildContext context;
@@ -21,12 +17,12 @@ abstract class HttpConnection {
     dio.options.baseUrl = url;
   }
 
-  HttpConnection(this.context, {String baseUrl = env.endpoint}) {
+  HttpConnection(this.context, {String? baseUrl}) {
+    baseUrl ??= AppConfig.read(context).endpoint;
     _baseUrl = baseUrl;
     dio = Dio(BaseOptions(baseUrl: baseUrl, headers: {"Content-Type": "application/json"}));
   }
 
-  ///if pure == true, it will return data without parse it to ApiResponse
   Future get(String url, {Map<String, String>? params, dynamic headers, bool pure = false}) async {
     try {
       headers = _preRequestHeaders(headers);
@@ -42,7 +38,6 @@ abstract class HttpConnection {
     }
   }
 
-  ///if pure == true, it will return data without parse it to ApiResponse
   Future post(String url, {Map<String, String>? params, dynamic body, dynamic headers, bool pure = false}) async {
     try {
       headers = _preRequestHeaders(headers);
@@ -58,7 +53,6 @@ abstract class HttpConnection {
     }
   }
 
-  ///if pure == true, it will return data without parse it to ApiResponse
   Future put(String url, {Map<String, String>? params, dynamic body, dynamic headers, bool pure = false}) async {
     try {
       headers = _preRequestHeaders(headers);
@@ -74,7 +68,6 @@ abstract class HttpConnection {
     }
   }
 
-  ///if pure == true, it will return data without parse it to ApiResponse
   Future delete(String url, {Map<String, String>? params, dynamic body, dynamic headers, bool pure = false}) async {
     try {
       headers = _preRequestHeaders(headers);
@@ -130,50 +123,6 @@ abstract class HttpConnection {
       output += "$key=$value&";
     });
     return output.substring(0, output.length - 1);
-  }
-}
-
-///This is quick solution for make dummies request
-///
-///Just put your dummy json on assets folder and rename like after endpoint route
-///and replace "/" to "."
-///
-///"assets/dummies/${url.replaceAll("/", ".")}.json"
-class HttpDummies extends HttpConnection {
-  HttpDummies(super.context);
-
-  @override
-  Future get(String url, {Map<String, String>? params, headers, bool pure = false}) async {
-    return request(url, headers: headers, params: params, pure: pure);
-  }
-
-  @override
-  Future post(String url, {Map<String, String>? params, body, headers, bool pure = false}) {
-    return request(url, headers: headers, params: params, pure: pure);
-  }
-
-  @override
-  Future put(String url, {Map<String, String>? params, body, headers, bool pure = false}) {
-    return request(url, headers: headers, params: params, pure: pure);
-  }
-
-  @override
-  Future delete(String url, {Map<String, String>? params, body, headers, bool pure = false}) {
-    return request(url, headers: headers, params: params, pure: pure);
-  }
-
-  Future request(String url, {Map<String, String>? params, headers, bool pure = false}) async {
-    try {
-      await Future.delayed(const Duration(milliseconds: 300));
-      elog("Loading assets/dummies/${url.replaceAll("/", ".")}.json");
-      var raw = await rootBundle.loadString("assets/dummies/${url.replaceAll("/", ".")}.json");
-      var data = jsonDecode(raw);
-      elog(data);
-      if (pure) return data;
-      return ApiResponse.fromJson(data);
-    } catch (e) {
-      throw HttpErrorConnection(status: -500, message: "Error while parsing the dummies\n$e", title: "Parsing error");
-    }
   }
 }
 
