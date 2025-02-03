@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:boilerplate/core/resources/environment.dart';
+import 'package:boilerplate/core/utils/app_config.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -13,15 +15,10 @@ import 'ui/screens/splash_screen.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    name: defaultFirebaseAppName,
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
+  await Firebase.initializeApp(name: defaultFirebaseAppName, options: DefaultFirebaseOptions.currentPlatform);
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
   FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(!kDebugMode);
-
-  return runApp(const Application());
+  return runApp(AppConfig.builder(DevelopmentMode(), (context) => const Application()));
 }
 
 class Application extends StatelessWidget {
@@ -32,10 +29,10 @@ class Application extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => UserProvider()),
-        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (context) => ThemeProvider(AppConfig.read(context).color)),
       ],
       builder: (context, child) => MaterialApp(
-        title: 'App title',
+        title: AppConfig.read(context).appName,
         themeMode: context.watch<ThemeProvider>().themeMode,
         debugShowCheckedModeBanner: false,
         theme: themeData(context, Brightness.light),
