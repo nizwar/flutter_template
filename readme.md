@@ -22,18 +22,19 @@ Ensure everything is properly set up by using these recommended plugins!
 ### Required Packages
 ```yaml
   equatable: ^2.0.7
-  dio: ^5.7.0
+  dio: ^5.8.0+1
   provider: ^6.1.2
   shimmer: ^3.0.0
   cached_network_image: ^3.4.1
-  shared_preferences: ^2.3.5
+  shared_preferences: ^2.5.2
   ndialog: ^4.4.0
   pull_to_refresh_flutter3: ^2.0.2
+  intl: ^0.20.2
 
-  firebase_core: ^3.9.0
-  firebase_analytics: ^11.3.6
-  firebase_crashlytics: ^4.2.0
-  firebase_performance: ^0.10.0
+  firebase_core: ^3.11.0
+  firebase_analytics: ^11.4.2
+  firebase_crashlytics: ^4.3.2
+  firebase_performance: ^0.10.1
 ``` 
 
 ### Firebase Setup

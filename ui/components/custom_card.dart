@@ -1,5 +1,6 @@
-import 'package:boilerplate/core/resources/themes.dart';
 import 'package:flutter/material.dart';
+
+import '../../core/resources/themes.dart';
 
 class CustomCard extends StatelessWidget {
   final double? borderRadius;

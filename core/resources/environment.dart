@@ -1,5 +1,6 @@
-import 'package:boilerplate/core/utils/app_config.dart';
 import 'package:flutter/material.dart';
+
+import '../utils/app_config.dart';
 
 /// Development mode configuration.
 class DevelopmentMode extends AppConfig {

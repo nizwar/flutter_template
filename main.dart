@@ -1,12 +1,12 @@
-import 'dart:async';
-import 'package:boilerplate/core/resources/environment.dart';
-import 'package:boilerplate/core/utils/app_config.dart';
+import 'dart:async'; 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'core/providers/theme_provider.dart';
+import 'core/resources/environment.dart';
 import 'core/resources/themes.dart';
+import 'core/utils/app_config.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
 import 'core/providers/user_provider.dart';
@@ -28,7 +28,6 @@ class Application extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (context) => ThemeProvider(AppConfig.read(context).color)),
       ],
       builder: (context, child) => MaterialApp(

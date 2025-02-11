@@ -1,10 +1,10 @@
-import 'package:boilerplate/core/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:ndialog/ndialog.dart';
 
 import '../../ui/components/adaptive_progress_indicator.dart';
 import '../../ui/components/custom_card.dart';
+import 'navigations.dart';
 
 extension WidgetExtensions on Widget {
   /// A widget that dismisses the keyboard when tapped.
