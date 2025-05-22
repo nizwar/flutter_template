@@ -1,9 +1,10 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import '../models/model.dart';
-import '../providers/user_provider.dart';
 import '../utils/app_config.dart';
-import '../utils/logger.dart';
 
 abstract class HttpConnection {
   final BuildContext context;
@@ -27,14 +28,12 @@ abstract class HttpConnection {
     try {
       headers = _preRequestHeaders(headers);
       var resp = await dio.get(url + paramsToString(params), options: Options(headers: headers));
-      if (!_postRequestHeaders(resp)) return;
       if (pure) return resp.data;
       if (resp.data != null) {
         return ApiResponse.fromJson(resp.data);
       }
     } on DioException catch (e) {
-      elog("DIO Error - Code ${e.response?.statusCode ?? -1}, ${e.type}, ${e.error}");
-      throw HttpErrorConnection(status: e.response?.statusCode ?? -1, title: e.type.name, message: e.message ?? "Application internal error");
+      throw _handleError(e);
     }
   }
 
@@ -42,14 +41,12 @@ abstract class HttpConnection {
     try {
       headers = _preRequestHeaders(headers);
       var resp = await dio.post(url + paramsToString(params), data: body, options: Options(headers: headers));
-      if (!_postRequestHeaders(resp)) return;
       if (pure) return resp.data;
       if (resp.data != null) {
         return ApiResponse.fromJson(resp.data);
       }
     } on DioException catch (e) {
-      elog("DIO Error - Code ${e.response?.statusCode ?? -1}, ${e.type}, ${e.error}");
-      throw HttpErrorConnection(status: e.response?.statusCode ?? -1, title: e.type.name, message: e.message ?? "Application internal error");
+      throw _handleError(e);
     }
   }
 
@@ -57,14 +54,12 @@ abstract class HttpConnection {
     try {
       headers = _preRequestHeaders(headers);
       var resp = await dio.put(url + paramsToString(params), data: body, options: Options(headers: headers));
-      if (!_postRequestHeaders(resp)) return;
       if (pure) return resp.data;
       if (resp.data != null) {
         return ApiResponse.fromJson(resp.data);
       }
     } on DioException catch (e) {
-      elog("DIO Error - Code ${e.response?.statusCode ?? -1}, ${e.type}, ${e.error}");
-      throw HttpErrorConnection(status: e.response?.statusCode ?? -1, title: e.type.name, message: e.message ?? "Application internal error");
+      throw _handleError(e);
     }
   }
 
@@ -72,14 +67,12 @@ abstract class HttpConnection {
     try {
       headers = _preRequestHeaders(headers);
       var resp = await dio.delete(url + paramsToString(params), data: body, options: Options(headers: headers));
-      if (!_postRequestHeaders(resp)) return;
       if (pure) return resp.data;
       if (resp.data != null) {
         return ApiResponse.fromJson(resp.data);
       }
     } on DioException catch (e) {
-      elog("DIO Error - Code ${e.response?.statusCode ?? -1}, ${e.type}, ${e.error}");
-      throw HttpErrorConnection(status: e.response?.statusCode ?? -1, title: e.type.name, message: e.message ?? "Application internal error");
+      throw _handleError(e);
     }
   }
 
@@ -95,25 +88,37 @@ abstract class HttpConnection {
     return headers;
   }
 
-  bool _postRequestHeaders(Response response) {
-    if (response.statusCode == null) throw Exception("Application error on requests");
-    if (response.statusCode == 401) {
-      ///TODO : Implement refresh token ketimbang suruh user login lagi
-      UserProvider.logout(context);
-      throw HttpErrorConnection(status: 401, message: "Session expired", title: "Authentication Error");
+  HttpErrorConnection _handleError(DioException e) {
+    FirebaseCrashlytics.instance.setCustomKey("has_api_response", e.response != null);
+    FirebaseCrashlytics.instance.log("Request: ${e.requestOptions.path} ${e.requestOptions.method}");
+    FirebaseCrashlytics.instance.log("Request Headers: ${jsonEncode(e.requestOptions.headers)}");
+    if (e.requestOptions.data is FormData) {
+      FirebaseCrashlytics.instance.log({for (var e in (e.requestOptions.data as FormData).fields) MapEntry(e.key, e.value)}.toString());
+    } else {
+      FirebaseCrashlytics.instance.log("Request Body: ${e.requestOptions.data}");
     }
-    if (response.statusCode! > 300) {
-      if (response.data is Map<String, dynamic>) {
-        try {
-          ApiResponse respData = ApiResponse.fromJson(response.data);
-          elog("API - ${respData.message.toString()}");
-          throw HttpErrorConnection(status: response.statusCode ?? -1, title: "API Return Error", message: respData.message ?? "Not Available");
-        } catch (_) {}
+    if (e.response != null) {
+      final data = e.response?.data;
+      if (data != null) {
+        if (data is String) {
+          FirebaseCrashlytics.instance.log(data);
+          return HttpErrorConnection(status: e.response?.statusCode ?? -1, title: e.type.name, message: data);
+        } else {
+          try {
+            ApiResponse respData = ApiResponse.fromJson(data);
+            FirebaseCrashlytics.instance.log(jsonEncode(respData.toJson()));
+            return HttpErrorConnection(status: e.response?.statusCode ?? -1, title: "API Return Error", message: respData.message ?? "Not Available");
+          } catch (_) {
+            FirebaseCrashlytics.instance.log(jsonEncode(data));
+            return HttpErrorConnection(status: e.response?.statusCode ?? -1, title: e.type.name, message: e.message ?? "Application internal error");
+          }
+        }
       }
-      elog("Response Error - Code ${response.statusCode}, ${response.statusMessage!}, ${response.data}");
-      throw HttpErrorConnection(status: response.statusCode!, title: response.statusMessage!, message: response.data!);
+      FirebaseCrashlytics.instance.log(data.toString());
+      return HttpErrorConnection(status: e.response?.statusCode ?? -1, title: e.type.name, message: e.message ?? "Application internal error");
     }
-    return true;
+    FirebaseCrashlytics.instance.log("${e.type.name} ${e.message} - THERE IS NO RESPONSE");
+    return HttpErrorConnection(status: -1, title: e.type.name, message: e.message ?? "Application internal error");
   }
 
   static String paramsToString(Map<String, String>? params) {
