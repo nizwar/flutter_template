@@ -102,23 +102,48 @@ abstract class HttpConnection {
       if (data != null) {
         if (data is String) {
           FirebaseCrashlytics.instance.log(data);
-          return HttpErrorConnection(status: e.response?.statusCode ?? -1, title: e.type.name, message: data);
+          return HttpErrorConnection(
+            status: e.response?.statusCode ?? -1,
+            title: e.type.name,
+            message: data,
+            requestOptions: e.requestOptions,
+          );
         } else {
           try {
             ApiResponse respData = ApiResponse.fromJson(data);
             FirebaseCrashlytics.instance.log(jsonEncode(respData.toJson()));
-            return HttpErrorConnection(status: e.response?.statusCode ?? -1, title: "API Return Error", message: respData.message ?? "Not Available");
+            return HttpErrorConnection(
+              status: e.response?.statusCode ?? -1,
+              title: "API Return Error",
+              message: respData.message ?? "Not Available",
+              requestOptions: e.requestOptions,
+            );
           } catch (_) {
             FirebaseCrashlytics.instance.log(jsonEncode(data));
-            return HttpErrorConnection(status: e.response?.statusCode ?? -1, title: e.type.name, message: e.message ?? "Application internal error");
+            return HttpErrorConnection(
+              status: e.response?.statusCode ?? -1,
+              title: e.type.name,
+              message: e.message ?? "Application internal error",
+              requestOptions: e.requestOptions,
+            );
           }
         }
       }
       FirebaseCrashlytics.instance.log(data.toString());
-      return HttpErrorConnection(status: e.response?.statusCode ?? -1, title: e.type.name, message: e.message ?? "Application internal error");
+      return HttpErrorConnection(
+        status: e.response?.statusCode ?? -1,
+        title: e.type.name,
+        message: e.message ?? "Application internal error",
+        requestOptions: e.requestOptions,
+      );
     }
     FirebaseCrashlytics.instance.log("${e.type.name} ${e.message} - THERE IS NO RESPONSE");
-    return HttpErrorConnection(status: -1, title: e.type.name, message: e.message ?? "Application internal error");
+    return HttpErrorConnection(
+      status: -1,
+      title: e.type.name,
+      message: e.message ?? "Application internal error",
+      requestOptions: e.requestOptions,
+    );
   }
 
   static String paramsToString(Map<String, String>? params) {
@@ -161,10 +186,15 @@ class HttpErrorConnection implements Exception {
   final String message;
   final String title;
 
-  HttpErrorConnection({required this.status, required this.message, required this.title});
+  final dynamic data;
+  final dynamic body;
+
+  HttpErrorConnection({required this.status, required this.message, required this.title, RequestOptions? requestOptions})
+      : data = requestOptions?.data,
+        body = requestOptions?.data;
 
   @override
   String toString() {
-    return "Error $status, $title, $message";
+    return "Error $status, $message";
   }
 }
