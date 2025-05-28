@@ -18,71 +18,82 @@ abstract class HttpConnection {
     dio.options.baseUrl = url;
   }
 
-  HttpConnection(this.context, {String? baseUrl}) {
-    baseUrl ??= AppConfig.read(context).endpoint;
-    _baseUrl = baseUrl;
-    dio = Dio(BaseOptions(baseUrl: baseUrl, headers: {"Content-Type": "application/json"}));
+  HttpConnection(this.context, [Dio? dio]) {
+    this.dio = dio ?? Dio(BaseOptions(baseUrl: AppConfig.read(context).endpoint, headers: {'Content-Type': 'application/json', 'Accept': 'application/json'}));
   }
 
-  Future get(String url, {Map<String, String>? params, dynamic headers, bool pure = false}) async {
+  Future<T> get<T>(String url, {Map<String, String>? params, dynamic headers}) async {
     try {
       headers = _preRequestHeaders(headers);
       var resp = await dio.get(url + paramsToString(params), options: Options(headers: headers));
-      if (pure) return resp.data;
       if (resp.data != null) {
-        return ApiResponse.fromJson(resp.data);
+        if (T.toString().startsWith('ApiResponse')) {
+          return ApiResponse.fromJson(resp.data) as T;
+        }
+        return resp.data as T;
       }
     } on DioException catch (e) {
       throw _handleError(e);
     }
+    throw Exception("No data returned from the server");
   }
 
-  Future post(String url, {Map<String, String>? params, dynamic body, dynamic headers, bool pure = false}) async {
+  Future<T> post<T>(String url, {Map<String, String>? params, dynamic body, dynamic headers}) async {
     try {
       headers = _preRequestHeaders(headers);
+      clog(T.toString());
       var resp = await dio.post(url + paramsToString(params), data: body, options: Options(headers: headers));
-      if (pure) return resp.data;
       if (resp.data != null) {
-        return ApiResponse.fromJson(resp.data);
+        if (T.toString().startsWith('ApiResponse')) {
+          return ApiResponse.fromJson(resp.data) as T;
+        }
+        return resp.data as T;
       }
     } on DioException catch (e) {
       throw _handleError(e);
     }
+    throw Exception("No data returned from the server");
   }
 
-  Future put(String url, {Map<String, String>? params, dynamic body, dynamic headers, bool pure = false}) async {
+  Future<T> put<T>(String url, {Map<String, String>? params, dynamic body, dynamic headers}) async {
     try {
       headers = _preRequestHeaders(headers);
       var resp = await dio.put(url + paramsToString(params), data: body, options: Options(headers: headers));
-      if (pure) return resp.data;
-      if (resp.data != null) {
-        return ApiResponse.fromJson(resp.data);
+      if (resp.data != null) { 
+        if (T.toString().startsWith('ApiResponse')) {
+          return ApiResponse.fromJson(resp.data) as T;
+        }
+        return resp.data as T;
       }
     } on DioException catch (e) {
       throw _handleError(e);
     }
+    throw Exception("No data returned from the server");
   }
 
-  Future delete(String url, {Map<String, String>? params, dynamic body, dynamic headers, bool pure = false}) async {
+  Future<T> delete<T>(String url, {Map<String, String>? params, dynamic body, dynamic headers}) async {
     try {
       headers = _preRequestHeaders(headers);
       var resp = await dio.delete(url + paramsToString(params), data: body, options: Options(headers: headers));
-      if (pure) return resp.data;
-      if (resp.data != null) {
-        return ApiResponse.fromJson(resp.data);
+      if (resp.data != null) { 
+        if (T.toString().startsWith('ApiResponse')) {
+          return ApiResponse.fromJson(resp.data) as T;
+        }
+        return resp.data as T;
       }
     } on DioException catch (e) {
       throw _handleError(e);
     }
+    throw Exception("No data returned from the server");
   }
 
   Map<String, String>? _preRequestHeaders(Map<String, String>? headers) {
     // var userProvider = UserProvider.read(context);
-    // if (userProvider.auth?.token != null) {
+    // if (userProvider.token?.accessToken != null) {
     //   if (headers != null) {
-    //     headers.addEntries([MapEntry("Authorization", "Bearer ${userProvider.auth?.token}")]);
+    //     headers.addEntries([MapEntry("Authorization", "Bearer ${userProvider.token!.accessToken}")]);
     //   } else {
-    //     headers = {"Authorization": "Bearer ${userProvider.auth?.token}"};
+    //     headers = {"Authorization": "Bearer ${userProvider.token!.accessToken}"};
     //   }
     // }
     return headers;
@@ -158,26 +169,28 @@ abstract class HttpConnection {
 
 class ApiResponse<T> extends Model {
   ApiResponse({
-    this.success = false,
+    required this.status,
     this.message,
-    this.data,
+    this.result,
   });
 
-  final bool? success;
-  final String? message;
-  final T? data;
+  int status;
+  bool get success => (status >= 200 && status < 300);
+  String? message;
+
+  T? result;
 
   factory ApiResponse.fromJson(Map<String, dynamic> json) => ApiResponse(
-        success: json["success"],
+        status: json["status"],
         message: json["message"],
-        data: json["data"],
+        result: json["result"],
       );
 
   @override
   Map<String, dynamic> toJson() => {
-        "success": success,
+        "status": status,
         "message": message,
-        "data": data,
+        "result": result,
       };
 }
 
