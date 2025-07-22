@@ -41,8 +41,11 @@ abstract class HttpConnection {
   Future<T> post<T>(String url, {Map<String, String>? params, dynamic body, dynamic headers}) async {
     try {
       headers = _preRequestHeaders(headers);
-      clog(T.toString());
-      var resp = await dio.post(url + paramsToString(params), data: body, options: Options(headers: headers));
+      var resp = await dio.post(
+        url + paramsToString(params),
+        data: body,
+        options: Options(headers: headers),
+      );
       if (resp.data != null) {
         if (T.toString().startsWith('ApiResponse')) {
           return ApiResponse.fromJson(resp.data) as T;
@@ -58,8 +61,12 @@ abstract class HttpConnection {
   Future<T> put<T>(String url, {Map<String, String>? params, dynamic body, dynamic headers}) async {
     try {
       headers = _preRequestHeaders(headers);
-      var resp = await dio.put(url + paramsToString(params), data: body, options: Options(headers: headers));
-      if (resp.data != null) { 
+      var resp = await dio.put(
+        url + paramsToString(params),
+        data: body,
+        options: Options(headers: headers),
+      );
+      if (resp.data != null) {
         if (T.toString().startsWith('ApiResponse')) {
           return ApiResponse.fromJson(resp.data) as T;
         }
@@ -74,8 +81,12 @@ abstract class HttpConnection {
   Future<T> delete<T>(String url, {Map<String, String>? params, dynamic body, dynamic headers}) async {
     try {
       headers = _preRequestHeaders(headers);
-      var resp = await dio.delete(url + paramsToString(params), data: body, options: Options(headers: headers));
-      if (resp.data != null) { 
+      var resp = await dio.delete(
+        url + paramsToString(params),
+        data: body,
+        options: Options(headers: headers),
+      );
+      if (resp.data != null) {
         if (T.toString().startsWith('ApiResponse')) {
           return ApiResponse.fromJson(resp.data) as T;
         }
@@ -113,48 +124,23 @@ abstract class HttpConnection {
       if (data != null) {
         if (data is String) {
           FirebaseCrashlytics.instance.log(data);
-          return HttpErrorConnection(
-            status: e.response?.statusCode ?? -1,
-            title: e.type.name,
-            message: data,
-            requestOptions: e.requestOptions,
-          );
+          return HttpErrorConnection(status: e.response?.statusCode ?? -1, title: e.type.name, message: data, requestOptions: e.requestOptions);
         } else {
           try {
             ApiResponse respData = ApiResponse.fromJson(data);
             FirebaseCrashlytics.instance.log(jsonEncode(respData.toJson()));
-            return HttpErrorConnection(
-              status: e.response?.statusCode ?? -1,
-              title: "API Return Error",
-              message: respData.message ?? "Not Available",
-              requestOptions: e.requestOptions,
-            );
+            return HttpErrorConnection(status: e.response?.statusCode ?? -1, title: "API Return Error", message: respData.message ?? "Not Available", requestOptions: e.requestOptions);
           } catch (_) {
             FirebaseCrashlytics.instance.log(jsonEncode(data));
-            return HttpErrorConnection(
-              status: e.response?.statusCode ?? -1,
-              title: e.type.name,
-              message: e.message ?? "Application internal error",
-              requestOptions: e.requestOptions,
-            );
+            return HttpErrorConnection(status: e.response?.statusCode ?? -1, title: e.type.name, message: e.message ?? "Application internal error", requestOptions: e.requestOptions);
           }
         }
       }
       FirebaseCrashlytics.instance.log(data.toString());
-      return HttpErrorConnection(
-        status: e.response?.statusCode ?? -1,
-        title: e.type.name,
-        message: e.message ?? "Application internal error",
-        requestOptions: e.requestOptions,
-      );
+      return HttpErrorConnection(status: e.response?.statusCode ?? -1, title: e.type.name, message: e.message ?? "Application internal error", requestOptions: e.requestOptions);
     }
     FirebaseCrashlytics.instance.log("${e.type.name} ${e.message} - THERE IS NO RESPONSE");
-    return HttpErrorConnection(
-      status: -1,
-      title: e.type.name,
-      message: e.message ?? "Application internal error",
-      requestOptions: e.requestOptions,
-    );
+    return HttpErrorConnection(status: -1, title: e.type.name, message: e.message ?? "Application internal error", requestOptions: e.requestOptions);
   }
 
   static String paramsToString(Map<String, String>? params) {
@@ -168,11 +154,7 @@ abstract class HttpConnection {
 }
 
 class ApiResponse<T> extends Model {
-  ApiResponse({
-    required this.status,
-    this.message,
-    this.result,
-  });
+  ApiResponse({required this.status, this.message, this.result});
 
   int status;
   bool get success => (status >= 200 && status < 300);
@@ -180,18 +162,10 @@ class ApiResponse<T> extends Model {
 
   T? result;
 
-  factory ApiResponse.fromJson(Map<String, dynamic> json) => ApiResponse(
-        status: json["status"],
-        message: json["message"],
-        result: json["result"],
-      );
+  factory ApiResponse.fromJson(Map<String, dynamic> json) => ApiResponse(status: json["status"], message: json["message"], result: json["result"]);
 
   @override
-  Map<String, dynamic> toJson() => {
-        "status": status,
-        "message": message,
-        "result": result,
-      };
+  Map<String, dynamic> toJson() => {"status": status, "message": message, "result": result};
 }
 
 class HttpErrorConnection implements Exception {
@@ -202,9 +176,7 @@ class HttpErrorConnection implements Exception {
   final dynamic data;
   final dynamic body;
 
-  HttpErrorConnection({required this.status, required this.message, required this.title, RequestOptions? requestOptions})
-      : data = requestOptions?.data,
-        body = requestOptions?.data;
+  HttpErrorConnection({required this.status, required this.message, required this.title, RequestOptions? requestOptions}) : data = requestOptions?.data, body = requestOptions?.data;
 
   @override
   String toString() {
