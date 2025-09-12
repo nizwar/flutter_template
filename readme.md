@@ -1,4 +1,4 @@
-# Maxximum Flutter's Guidance
+# Flutter's Guidance
 
 ## BIG RULES
 
