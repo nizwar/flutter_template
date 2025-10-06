@@ -1,6 +1,15 @@
+import 'dart:io';
 import 'dart:math';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:iconsax_plus/iconsax_plus.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:mojang_nontr/core/utils/navigations.dart';
+
+import '../../ui/components/custom_divider.dart';
 
 export 'navigations.dart';
 export 'preferences.dart';
@@ -50,7 +59,7 @@ MaterialColor getMaterialColor(Color color) {
 
 /// Returns the size of the media in the given [BuildContext].
 ///
-/// This function uses the [MediaQuery] widget to obtain the size of the 
+/// This function uses the [MediaQuery] widget to obtain the size of the
 /// screen or parent widget in the provided [context].
 ///
 /// Example usage:
@@ -81,4 +90,105 @@ String randomString(int length) {
   const chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
   Random rnd = Random();
   return String.fromCharCodes(Iterable.generate(length, (_) => chars.codeUnitAt(rnd.nextInt(chars.length))));
+}
+
+Future<(Position, Placemark)?> getMyLocation([int permissionAttempt = 1]) async {
+  Position location = await Geolocator.checkPermission().then((permission) async {
+    var result = permission;
+    if (result == LocationPermission.denied || result == LocationPermission.deniedForever) {
+      result = await Geolocator.requestPermission();
+    }
+
+    if (result == LocationPermission.whileInUse || result == LocationPermission.always) {
+      return await Geolocator.getCurrentPosition();
+    } else {
+      throw Exception("Location permission denied");
+    }
+  });
+
+  final placeMark = await GeocodingPlatform.instance!.placemarkFromCoordinates(location.latitude, location.longitude).then((value) {
+    if (value.isNotEmpty) {
+      return value.first;
+    } else {
+      throw Exception("No placemark found for the given coordinates");
+    }
+  });
+
+  return (location, placeMark);
+}
+
+ScaffoldFeatureController showErrorSnackbar(BuildContext context, String message) {
+  return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(message),
+    backgroundColor: Colors.red,
+  ));
+}
+
+ScaffoldFeatureController showSuccessSnackbar(BuildContext context, String message) {
+  return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(message),
+    backgroundColor: Colors.green,
+  ));
+}
+
+Future<File?> pickAttachment(BuildContext context, {bool gallery = true, bool camera = true, bool file = true, List<String>? allowedExtension}) {
+  var picker = ImagePicker();
+  if (gallery && !camera && !file) {
+    return picker.pickImage(source: ImageSource.gallery).then((value) => value != null ? File(value.path) : null);
+  }
+  if (!gallery && camera && !file) {
+    return picker.pickImage(source: ImageSource.camera).then((value) => value != null ? File(value.path) : null);
+  }
+  if (!gallery && !camera && file) {
+    return FilePicker.platform
+        .pickFiles(allowMultiple: false, allowedExtensions: allowedExtension, type: (allowedExtension?.isNotEmpty ?? false) ? FileType.custom : FileType.media)
+        .then((value) => (value?.files.isNotEmpty ?? false) ? File(value!.files.first.path!) : null);
+  }
+  return showModalBottomSheet(
+    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+    context: context,
+    builder: (context) {
+      return SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                height: 20,
+                alignment: Alignment.center,
+                child: Container(width: 80, height: 3, decoration: BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.circular(10))),
+              ),
+              if (file)
+                ListTile(
+                  leading: const Icon(IconsaxPlusLinear.document_1),
+                  title: const Text("Lampiran File"),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  onTap: () =>
+                      FilePicker.platform.pickFiles(allowMultiple: false, type: (allowedExtension?.isNotEmpty ?? false) ? FileType.custom : FileType.media, allowedExtensions: allowedExtension).then(
+                            (value) => closeScreen(context, (value?.files.isNotEmpty ?? false) ? File(value!.files.first.path!) : null),
+                          ),
+                ),
+              if (gallery)
+                ListTile(
+                  leading: const Icon(IconsaxPlusLinear.gallery),
+                  title: const Text("Pilih Foto"),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  onTap: () => picker.pickImage(source: ImageSource.gallery).then((value) => closeScreen(context, value != null ? File(value.path) : null)),
+                ),
+              if (camera)
+                ListTile(
+                  leading: const Icon(IconsaxPlusLinear.camera),
+                  title: const Text("Ambil Foto"),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  onTap: () => picker.pickImage(source: ImageSource.camera).then((value) => closeScreen(context, value != null ? File(value.path) : null)),
+                ),
+              const ColumnDivider(),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }

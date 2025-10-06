@@ -5,11 +5,11 @@ import '../utils/app_config.dart';
 /// Development mode configuration.
 class DevelopmentMode extends AppConfig {
   /// Creates a new instance of [DevelopmentMode].
-  DevelopmentMode() : super(appName: 'App title', endpoint: 'https://api.dev.com', color: Colors.blue);
+  DevelopmentMode() : super(appName: 'Mojang Non-TR DEV', endpoint: 'https://dev-ujang.artristik.co.id/non-tr/api', color: Color(0xffFFFF00));
 }
 
 /// Production mode configuration.
 class ProductionMode extends AppConfig {
   /// Creates a new instance of [ProductionMode].
-  ProductionMode() : super(appName: 'App title', endpoint: 'https://api.prod.com', color: Colors.green);
+  ProductionMode() : super(appName: 'Mojang Non-TR', endpoint: 'https://api.prod.com', color: Color(0xffFFFF00));
 }

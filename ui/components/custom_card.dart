@@ -29,7 +29,7 @@ class CustomCard extends StatelessWidget {
       decoration: BoxDecoration(
         boxShadow: [boxShadow ?? BoxShadow(blurRadius: 5, color: theme(context).shadowColor)],
         borderRadius: BorderRadius.circular(borderRadius ?? 10),
-        color: backgroundColor ?? Theme.of(context).cardColor,
+        color: backgroundColor ?? theme(context).cardColor,
       ),
       child: child ?? const SizedBox.shrink(),
     );

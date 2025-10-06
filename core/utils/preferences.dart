@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:mojang_nontr/core/models/auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// A class that handles the application's preferences and settings.
@@ -24,6 +27,20 @@ class Preferences {
   set token(String? value) => shared.setString("token", value!);
 
   String? get token => shared.getString("token");
+
+  Auth? get auth {
+    String? data = shared.getString("auth");
+    if (data == null) return null;
+    return Auth.fromJson(jsonDecode(data));
+  }
+
+  set auth(Auth? auth) {
+    if (auth == null) {
+      shared.remove("auth");
+    } else {
+      shared.setString("auth", jsonEncode(auth.toJson()));
+    }
+  }
 
   static Future<Preferences> instance() => SharedPreferences.getInstance().then((value) => Preferences(value));
 }

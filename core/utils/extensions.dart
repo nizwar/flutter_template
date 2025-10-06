@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:ndialog/ndialog.dart';
 
 import '../../ui/components/adaptive_progress_indicator.dart';
 import '../../ui/components/custom_card.dart';
-import 'navigations.dart';
 
 extension WidgetExtensions on Widget {
   /// A widget that dismisses the keyboard when tapped.
@@ -39,14 +40,7 @@ extension FutureProgressDialog<T> on Future<T> {
   /// when the dialog is dismissed.
   ///
   /// [context] - The build context in which to show the progress dialog.
-  Future<T?> showProgress(BuildContext context) => showCustomProgressDialog(
-        context,
-        loadingWidget: CustomCard(padding: const EdgeInsets.all(15), child: const AdaptiveProgressIndicator()),
-        onProgressError: (error) {
-          closeScreen(context);
-          throw error;
-        },
-      );
+  Future<T?> showProgress(BuildContext context) => showCustomProgressDialog(context, loadingWidget: CustomCard(padding: const EdgeInsets.all(15), child: const AdaptiveProgressIndicator()));
 }
 
 extension DateTimeExtensions on DateTime {
@@ -185,6 +179,32 @@ extension StringExtensions on String {
           .join(' ');
     } else {
       return isNotEmpty ? this[0].toUpperCase() + substring(1).toLowerCase() : '';
+    }
+  }
+}
+
+extension PositionExtension on Position {
+  String distanceTo(Position other) {
+    final distanceInMeters = Geolocator.distanceBetween(latitude, longitude, other.latitude, other.longitude);
+    if (distanceInMeters >= 1000) {
+      final distanceInKm = distanceInMeters / 1000;
+      return "${distanceInKm.toStringAsFixed(2)} km";
+    } else {
+      return "${distanceInMeters.toStringAsFixed(0)} m";
+    }
+  }
+
+  LatLng get toLatLng => LatLng(latitude, longitude);
+}
+
+extension LatLngExtension on LatLng {
+  String distanceTo(LatLng other) {
+    final distanceInMeters = Geolocator.distanceBetween(latitude, longitude, other.latitude, other.longitude);
+    if (distanceInMeters >= 1000) {
+      final distanceInKm = distanceInMeters / 1000;
+      return "${distanceInKm.toStringAsFixed(2)} km";
+    } else {
+      return "${distanceInMeters.toStringAsFixed(0)} m";
     }
   }
 }
