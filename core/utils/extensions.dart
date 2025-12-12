@@ -4,7 +4,6 @@ import 'package:ndialog/ndialog.dart';
 
 import '../../ui/components/adaptive_progress_indicator.dart';
 import '../../ui/components/custom_card.dart';
-import 'navigations.dart';
 
 extension WidgetExtensions on Widget {
   /// A widget that dismisses the keyboard when tapped.
@@ -23,10 +22,7 @@ extension WidgetExtensions on Widget {
   /// Parameters:
   /// - `context`: The build context of the widget.
   Widget dismissKeyboardOnTap(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: this,
-    );
+    return GestureDetector(onTap: () => FocusScope.of(context).unfocus(), child: this);
   }
 }
 
@@ -40,136 +36,132 @@ extension FutureProgressDialog<T> on Future<T> {
   ///
   /// [context] - The build context in which to show the progress dialog.
   Future<T?> showProgress(BuildContext context) => showCustomProgressDialog(
-        context,
-        loadingWidget: CustomCard(padding: const EdgeInsets.all(15), child: const AdaptiveProgressIndicator()),
-        onProgressError: (error) {
-          closeScreen(context);
-          throw error;
-        },
-      );
+    context,
+    loadingWidget: CustomCard(padding: const EdgeInsets.all(15), child: const AdaptiveProgressIndicator()),
+  );
 }
 
 extension DateTimeExtensions on DateTime {
   /// Formats the date as a day of the month (1-31).
-  String d({locale}) => DateFormat.d(locale).format(this);
+  String d({DateTime? locale}) => DateFormat.d(locale).format(this);
 
   /// Formats the date as an abbreviated day of the week (Mon, Tue, etc.).
-  String E({locale}) => DateFormat.E(locale).format(this);
+  String E({DateTime? locale}) => DateFormat.E(locale).format(this);
 
   /// Formats the date as a full day of the week (Monday, Tuesday, etc.).
   // ignore: non_constant_identifier_names
-  String EEEE({locale}) => DateFormat.EEEE(locale).format(this);
+  String EEEE({DateTime? locale}) => DateFormat.EEEE(locale).format(this);
 
   /// Formats the date as a narrow day of the week (M, T, etc.).
   // ignore: non_constant_identifier_names
-  String EEEEE({locale}) => DateFormat.EEEEE(locale).format(this);
+  String EEEEE({DateTime? locale}) => DateFormat.EEEEE(locale).format(this);
 
   /// Formats the date as an abbreviated month (Jan, Feb, etc.).
   // ignore: non_constant_identifier_names
-  String LLL({locale}) => DateFormat.LLL(locale).format(this);
+  String LLL({DateTime? locale}) => DateFormat.LLL(locale).format(this);
 
   /// Formats the date as a full month (January, February, etc.).
   // ignore: non_constant_identifier_names
-  String LLLL({locale}) => DateFormat.LLLL(locale).format(this);
+  String LLLL({DateTime? locale}) => DateFormat.LLLL(locale).format(this);
 
   /// Formats the date as a numeric month (1-12).
-  String M({locale}) => DateFormat.M(locale).format(this);
+  String M({DateTime? locale}) => DateFormat.M(locale).format(this);
 
   /// Formats the date as a numeric month and day (MM/dd).
   // ignore: non_constant_identifier_names
-  String Md({locale}) => DateFormat.Md(locale).format(this);
+  String Md({DateTime? locale}) => DateFormat.Md(locale).format(this);
 
   /// Formats the date as an abbreviated day of the week, numeric month, and day (EEE, MM/dd).
   // ignore: non_constant_identifier_names
-  String MEd({locale}) => DateFormat.MEd(locale).format(this);
+  String MEd({DateTime? locale}) => DateFormat.MEd(locale).format(this);
 
   /// Formats the date as an abbreviated month and day (MMM dd).
   // ignore: non_constant_identifier_names
-  String MMM({locale}) => DateFormat.MMM(locale).format(this);
+  String MMM({DateTime? locale}) => DateFormat.MMM(locale).format(this);
 
   /// Formats the date as an abbreviated month, day, and year (MMM dd, yyyy).
   // ignore: non_constant_identifier_names
-  String MMMd({locale}) => DateFormat.MMMd(locale).format(this);
+  String MMMd({DateTime? locale}) => DateFormat.MMMd(locale).format(this);
 
   /// Formats the date as an abbreviated day of the week, month, and day (EEE, MMM dd).
   // ignore: non_constant_identifier_names
-  String MMMEd({locale}) => DateFormat.MMMEd(locale).format(this);
+  String MMMEd({DateTime? locale}) => DateFormat.MMMEd(locale).format(this);
 
   /// Formats the date as a full month (MMMM).
   // ignore: non_constant_identifier_names
-  String MMMM({locale}) => DateFormat.MMMM(locale).format(this);
+  String MMMM({DateTime? locale}) => DateFormat.MMMM(locale).format(this);
 
   /// Formats the date as a full month and day (MMMM dd).
   // ignore: non_constant_identifier_names
-  String MMMMd({locale}) => DateFormat.MMMMd(locale).format(this);
+  String MMMMd({DateTime? locale}) => DateFormat.MMMMd(locale).format(this);
 
   /// Formats the date as a full day of the week, month, and day (EEEE, MMMM dd).
   // ignore: non_constant_identifier_names
-  String MMMMEEEEd({locale}) => DateFormat.MMMMEEEEd(locale).format(this);
+  String MMMMEEEEd({DateTime? locale}) => DateFormat.MMMMEEEEd(locale).format(this);
 
   /// Formats the date as an abbreviated quarter (Q1, Q2, etc.).
   // ignore: non_constant_identifier_names
-  String QQQ({locale}) => DateFormat.QQQ(locale).format(this);
+  String QQQ({DateTime? locale}) => DateFormat.QQQ(locale).format(this);
 
   /// Formats the date as a full quarter (1st quarter, 2nd quarter, etc.).
   // ignore: non_constant_identifier_names
-  String QQQQ({locale}) => DateFormat.QQQQ(locale).format(this);
+  String QQQQ({DateTime? locale}) => DateFormat.QQQQ(locale).format(this);
 
   /// Formats the date as a numeric year (yyyy).
-  String y({locale}) => DateFormat.y(locale).format(this);
+  String y({DateTime? locale}) => DateFormat.y(locale).format(this);
 
   /// Formats the date as a numeric year and month (yyyy-MM).
-  String yM({locale}) => DateFormat.yM(locale).format(this);
+  String yM({DateTime? locale}) => DateFormat.yM(locale).format(this);
 
   /// Formats the date as a numeric year, month, and day (yyyy-MM-dd).
-  String yMd({locale}) => DateFormat.yMd(locale).format(this);
+  String yMd({DateTime? locale}) => DateFormat.yMd(locale).format(this);
 
   /// Formats the date as an abbreviated day of the week, numeric year, month, and day (EEE, yyyy-MM-dd).
-  String yMEd({locale}) => DateFormat.yMEd(locale).format(this);
+  String yMEd({DateTime? locale}) => DateFormat.yMEd(locale).format(this);
 
   /// Formats the date as an abbreviated year, month, and day (MMM yyyy).
-  String yMMM({locale}) => DateFormat.yMMM(locale).format(this);
+  String yMMM({DateTime? locale}) => DateFormat.yMMM(locale).format(this);
 
   /// Formats the date as an abbreviated year, month, and day (MMM dd, yyyy).
-  String yMMMd({locale}) => DateFormat.yMMMd(locale).format(this);
+  String yMMMd({DateTime? locale}) => DateFormat.yMMMd(locale).format(this);
 
   /// Formats the date as an abbreviated day of the week, year, month, and day (EEE, MMM dd, yyyy).
-  String yMMMEd({locale}) => DateFormat.yMMMEd(locale).format(this);
+  String yMMMEd({DateTime? locale}) => DateFormat.yMMMEd(locale).format(this);
 
   /// Formats the date as a full year and month (MMMM yyyy).
-  String yMMMM({locale}) => DateFormat.yMMMM(locale).format(this);
+  String yMMMM({DateTime? locale}) => DateFormat.yMMMM(locale).format(this);
 
   /// Formats the date as a full year, month, and day (MMMM dd, yyyy).
-  String yMMMMd({locale}) => DateFormat.yMMMMd(locale).format(this);
+  String yMMMMd({DateTime? locale}) => DateFormat.yMMMMd(locale).format(this);
 
   /// Formats the date as a full day of the week, year, month, and day (EEEE, MMMM dd, yyyy).
-  String yMMMMEEEEd({locale}) => DateFormat.yMMMMEEEEd(locale).format(this);
+  String yMMMMEEEEd({DateTime? locale}) => DateFormat.yMMMMEEEEd(locale).format(this);
 
   /// Formats the date as an abbreviated year and quarter (Q1 yyyy).
-  String yQQQ({locale}) => DateFormat.yQQQ(locale).format(this);
+  String yQQQ({DateTime? locale}) => DateFormat.yQQQ(locale).format(this);
 
   /// Formats the date as a full year and quarter (1st quarter yyyy).
-  String yQQQQ({locale}) => DateFormat.yQQQQ(locale).format(this);
+  String yQQQQ({DateTime? locale}) => DateFormat.yQQQQ(locale).format(this);
 
   /// Formats the time as a 24-hour clock hour (0-23).
-  String H({locale}) => DateFormat.H(locale).format(this);
+  String H({DateTime? locale}) => DateFormat.H(locale).format(this);
 
   /// Formats the time as a 24-hour clock hour and minute (HH:mm).
   // ignore: non_constant_identifier_names
-  String Hm({locale}) => DateFormat.Hm(locale).format(this);
+  String Hm({DateTime? locale}) => DateFormat.Hm(locale).format(this);
 
   /// Formats the time as a 24-hour clock hour, minute, and second (HH:mm:ss).
   // ignore: non_constant_identifier_names
-  String Hms({locale}) => DateFormat.Hms(locale).format(this);
+  String Hms({DateTime? locale}) => DateFormat.Hms(locale).format(this);
 
   /// Formats the time as a 12-hour clock hour (1-12).
-  String j({locale}) => DateFormat.j(locale).format(this);
+  String j({DateTime? locale}) => DateFormat.j(locale).format(this);
 
   /// Formats the time as a 12-hour clock hour and minute (h:mm a).
-  String jm({locale}) => DateFormat.jm(locale).format(this);
+  String jm({DateTime? locale}) => DateFormat.jm(locale).format(this);
 
   /// Formats the time as a 12-hour clock hour, minute, and second (h:mm:ss a).
-  String jms([locale]) => DateFormat.jms([locale]).format(this);
+  String jms([DateTime? locale]) => DateFormat.jms([locale]).format(this);
 }
 
 extension StringExtensions on String {

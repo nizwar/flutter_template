@@ -29,4 +29,4 @@ class ThemeProvider extends ChangeNotifier {
   static ThemeData theme(BuildContext context) => Theme.of(context);
 }
 
-ThemeProvider themeProvider(context) => ThemeProvider.read(context);
+ThemeProvider themeProvider(BuildContext context) => ThemeProvider.read(context);

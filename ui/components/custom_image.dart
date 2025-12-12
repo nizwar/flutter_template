@@ -14,18 +14,7 @@ class CustomImage extends StatelessWidget {
   final String? errorAssets;
   final BoxShape? boxShape;
 
-  const CustomImage({
-    super.key,
-    @required this.url,
-    this.width,
-    this.height,
-    this.borderRadius,
-    this.errorAssets,
-    this.fit = BoxFit.cover,
-    this.zoomOnTap = false,
-    this.showBlackGradient = false,
-    this.boxShape,
-  });
+  const CustomImage({super.key, required this.url, this.width, this.height, this.borderRadius, this.errorAssets, this.fit = BoxFit.cover, this.zoomOnTap = false, this.showBlackGradient = false, this.boxShape});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +22,17 @@ class CustomImage extends StatelessWidget {
     if (zoomOnTap) {
       zoomOnTapFunction = () {
         ZoomDialog(
-          child: CustomImage(url: url, boxShape: boxShape, borderRadius: borderRadius, errorAssets: errorAssets, fit: fit, height: height, width: width, showBlackGradient: false, zoomOnTap: false),
+          child: CustomImage(
+            url: url,
+            boxShape: boxShape,
+            borderRadius: borderRadius,
+            errorAssets: errorAssets,
+            fit: fit,
+            height: height,
+            width: width,
+            showBlackGradient: false,
+            zoomOnTap: false,
+          ),
         ).show(context);
       };
     }
@@ -51,21 +50,21 @@ class CustomImage extends StatelessWidget {
             CachedNetworkImage(
               fit: fit!,
               imageUrl: url!,
-              placeholder: (context, string) => Container(alignment: Alignment.center, child: ShimmeringObject(radius: borderRadius ?? BorderRadius.circular(0.0))),
+              placeholder: (context, string) => Container(
+                alignment: Alignment.center,
+                child: ShimmeringObject(radius: borderRadius ?? BorderRadius.circular(0.0)),
+              ),
               errorWidget: (context, string, obj) {
                 if (errorAssets == null) return Center(child: Icon(Icons.error_outline));
-                return Image.asset(
-                  errorAssets!,
-                  fit: BoxFit.cover,
-                );
+                return Image.asset(errorAssets!, fit: BoxFit.cover);
               },
             ),
             if (showBlackGradient)
               Container(
                 decoration: BoxDecoration(
-                    gradient:
-                        LinearGradient(colors: [Colors.black.withValues(alpha: .5), Colors.transparent, Colors.black.withValues(alpha: .5)], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
-              )
+                  gradient: LinearGradient(colors: [Colors.black.withValues(alpha: .5), Colors.transparent, Colors.black.withValues(alpha: .5)], begin: Alignment.topCenter, end: Alignment.bottomCenter),
+                ),
+              ),
           ],
         ),
       ),

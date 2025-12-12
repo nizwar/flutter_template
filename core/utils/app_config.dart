@@ -32,12 +32,12 @@ abstract class AppConfig extends ChangeNotifier {
   static AppConfig read(BuildContext context) => context.read<AppConfig>();
 
   /// A builder method that provides the [AppConfig] to the widget tree using [ChangeNotifierProvider].
-  static builder(AppConfig appConfig, Widget Function(BuildContext context) builder) {
+  static ChangeNotifierProvider<AppConfig> builder(AppConfig appConfig, Widget Function(BuildContext context) builder) {
     return ChangeNotifierProvider(create: (_) => appConfig, builder: (context, child) => builder(context));
   }
 
   /// Switches the current configuration to the new [AppConfig] and notifies listeners.
-  static switchConfig(BuildContext context, AppConfig config) {
+  static void switchConfig(BuildContext context, AppConfig config) {
     var config = context.read<AppConfig>();
     config.endpoint = config.endpoint;
     config.appName = config.appName;

@@ -156,11 +156,11 @@ abstract class HttpConnection {
 class ApiResponse<T> extends Model {
   ApiResponse({required this.status, this.message, this.result});
 
-  int status;
   bool get success => (status >= 200 && status < 300);
-  String? message;
 
-  T? result;
+  final int status;
+  final String? message;
+  final T? result;
 
   factory ApiResponse.fromJson(Map<String, dynamic> json) => ApiResponse(status: json["status"], message: json["message"], result: json["result"]);
 
