@@ -21,7 +21,7 @@ Ensure everything is properly set up by using these recommended plugins!
 
 ### Required Packages
 ```yaml
-
+  cupertino_icons: ^1.0.8
   equatable: ^2.0.7
   dio: ^5.9.0
   provider: ^6.1.5+1
@@ -31,10 +31,11 @@ Ensure everything is properly set up by using these recommended plugins!
   ndialog: ^4.5.0+1
   pull_to_refresh_flutter3: ^2.0.2
   intl: ^0.20.2
+  go_router: ^17.0.1
 
-  firebase_core: ^4.2.1
-  firebase_analytics: ^12.0.4
-  firebase_crashlytics: ^5.0.5
+  firebase_core: ^4.3.0
+  firebase_analytics: ^12.1.0
+  firebase_crashlytics: ^5.0.6
   firebase_performance: ^0.11.1+2
 ``` 
 

@@ -2,10 +2,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'core/providers/theme_provider.dart';
 import 'core/resources/environment.dart';
 import 'core/resources/themes.dart';
 import 'core/utils/app_config.dart';
+import 'core/utils/route.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
 import 'ui/screens/main_screen.dart';
@@ -25,31 +27,20 @@ class Application extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (context) => ThemeProvider(AppConfig.read(context).color))],
-      builder: (context, child) => MaterialApp(title: AppConfig.read(context).appName, themeMode: context.watch<ThemeProvider>().themeMode, debugShowCheckedModeBanner: false, theme: themeData(context, Brightness.light), darkTheme: themeData(context, Brightness.dark), home: const Root()),
+      providers: [
+        ///TODO: Add your global providers here
+        ChangeNotifierProvider(create: (context) => ThemeProvider(AppConfig.read(context).color)),
+
+        Provider(create: (context) => getRouter(context), dispose: (_, router) => router.dispose()),
+      ],
+      builder: (context, child) => MaterialApp.router(
+        routerConfig: context.read<GoRouter>(),
+        title: AppConfig.read(context).appName,
+        themeMode: context.watch<ThemeProvider>().themeMode,
+        debugShowCheckedModeBanner: false,
+        theme: themeData(context, Brightness.light),
+        darkTheme: themeData(context, Brightness.dark),
+      ),
     );
-  }
-}
-
-class Root extends StatefulWidget {
-  const Root({super.key});
-
-  @override
-  RootState createState() => RootState();
-}
-
-class RootState extends State<Root> {
-  bool _ready = false;
-
-  @override
-  void initState() {
-    // TODO: Do something to make _ready true
-    _ready = true;
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _ready ? const MainScreen() : const SplashScreen();
   }
 }
