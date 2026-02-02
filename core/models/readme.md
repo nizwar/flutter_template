@@ -10,6 +10,12 @@ After generating your model, ensure to `extend the Model class` to inherit all t
 4. Avoid UI imports inside models.
 5. If a field is optional, mark it as nullable and handle it safely.
 
+## Base Model (What You Get)
+- `Model` extends `Equatable` for value comparison.
+- `toJson()` is required for serialization.
+- `print()` uses `clog()` for debug-only structured logging.
+- `stringify` is enabled to improve debug output.
+
 ### Example:
 For consistency and clarity, all file names should follow a strict naming convention without any prefixes or suffixes. Simply use the name of the entity represented in the file.
 

@@ -8,6 +8,18 @@ Providers stored here are strictly for global variables—data that needs to be 
 4. Expose immutable state; mutate through methods.
 5. Avoid direct API calls in UI; route them through providers or services.
 
+## Current Providers (From Code)
+### ThemeProvider
+- Requires a `Color` swatch in the constructor.
+- Exposes `themeMode`, `colorSwatch`, and `isDarkMode(context)`.
+- Use `setThemeMode(ThemeMode)` to update and notify listeners.
+- Static helpers: `read(context)`, `watch(context)`, and `theme(context)`.
+
+### UserProvider
+- Holds a nullable `token` and notifies on change.
+- Includes a `logout(context)` placeholder for sign-out logic.
+- Static helpers: `read(context)` and `watch(context)`.
+
 ## Implementation:
 All global provider declarations should be added inside the main.dart file, ensuring that they are available across the app. This makes the data easily accessible from any part of the application without the need to redeclare or duplicate the logic.
 
@@ -27,7 +39,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => UserProvider()),
-        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider(AppConfig.read(context).color)),
       ],
       child: MyApp(),
     ),

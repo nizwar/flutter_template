@@ -8,6 +8,13 @@ All API calls are managed through the HTTP connections defined in this section. 
 4. Handle `HttpErrorConnection` at the widget layer with clear user feedback.
 5. Keep request/response models in `lib/core/models` and extend `Model`.
 
+## Implementation Notes (From Code)
+- `HttpConnection` exposes `get`, `post`, `put`, and `delete` with optional `params`, `headers`, and `body`.
+- Base URL is read from `AppConfig.read(context).endpoint` and can be overridden with `updateBaseUrl(url)`.
+- `_preRequestHeaders` is the hook for adding auth headers.
+- All Dio errors are wrapped into `HttpErrorConnection` with Crashlytics logging.
+- `ApiResponse` uses `status`, `message`, and `result` fields.
+
 The base URL for your API is declared in the `environment`, which means you don't need to specify the full URL for each request. Instead, you only need to provide the path relative to the base URL.
 
 For example, if the base URL is https://api.example.com, and you want to make a request to the auth/login endpoint, you simply use the path:
@@ -33,12 +40,12 @@ class UserHttp extends HttpConnection {
             "password": password
         });
 
-        // ApiResponse is a custom model defined in https/httpConnection.dart.
+        // ApiResponse is a custom model defined in https/http_connection.dart.
         // Example API response:
         // {
-        //   success: true,
+        //   status: 200,
         //   message: "Success",
-        //   data: {"name": "nizwar", ...},
+        //   result: {"name": "nizwar", ...}
         // }
 
         // Simple validation: if the response is successful, return a User object.

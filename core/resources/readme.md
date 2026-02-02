@@ -17,6 +17,22 @@ Avoid hardcoding colors in your widgets. Instead, leverage the theme's ColorSche
 3. Update shared styles in `styles.dart` instead of duplicating.
 4. Add new colors to the palette in `colors.dart` only when needed.
 
+## What’s Inside (From Code)
+### colors.dart
+- `CustomColors` extension on `ThemeData`.
+- Provides `colorRedPrimary`, `shadowColor`, and `background` with light/dark variants.
+
+### themes.dart
+- `themeData(context, brightness)` builds Material 3 theme with `ThemeProvider` swatch.
+- Customizes app bar, buttons, and input decoration defaults.
+- Helpers: `theme(context)`, `textTheme(context)`, and `colorScheme(context)`.
+
+### styles.dart
+- Reserved for shared UI styles (currently empty). Add reusable input/button/text styles here.
+
+### environment.dart
+- `DevelopmentMode` and `ProductionMode` extend `AppConfig` with different endpoints and colors.
+
 To simplify access to theme-related properties, the following utility functions are provided:
 
 * Retrieves the current ThemeData for the application
