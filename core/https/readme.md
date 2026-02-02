@@ -1,6 +1,13 @@
 # Http Connections
 All API calls are managed through the HTTP connections defined in this section. These connections handle communication between the app and the backend, ensuring data is fetched and sent securely.
 
+## AI Instructions (HTTP)
+1. All API files must use the `*_http.dart` suffix and extend `HttpConnection`.
+2. Do not perform UI actions inside `HttpConnection`.
+3. Keep endpoint paths relative to the base URL; update base URL only when needed.
+4. Handle `HttpErrorConnection` at the widget layer with clear user feedback.
+5. Keep request/response models in `lib/core/models` and extend `Model`.
+
 The base URL for your API is declared in the `environment`, which means you don't need to specify the full URL for each request. Instead, you only need to provide the path relative to the base URL.
 
 For example, if the base URL is https://api.example.com, and you want to make a request to the auth/login endpoint, you simply use the path:
@@ -149,3 +156,9 @@ Future<void> loginUser() async {
 ```
 Customize Error Feedback:
 You can modify the HttpErrorConnection class to extract additional details from your API's error responses, such as specific error codes or messages.
+
+## Checklist for New Endpoints
+- Create a model in `lib/core/models` (extend `Model`)
+- Create a `*_http.dart` file for the endpoint
+- Add a provider if the data is globally shared
+- Add error handling in the screen/widget

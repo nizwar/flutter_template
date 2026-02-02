@@ -1,6 +1,13 @@
 # Components
 Components are reusable widgets designed to prevent repetitive code and simplify the development process. They can be easily called and utilized anywhere they are needed, promoting consistency and maintainability across the project.
 
+## AI Instructions (Components)
+1. Keep components stateless unless local state is required.
+2. Use theme helpers for colors and text styles.
+3. Favor composability: accept `child`, `builder`, or `content` parameters.
+4. Avoid tight coupling to a single screen or feature.
+5. Document component usage with a short example when adding a new one.
+
 ### Custom Divider
 Utilize `ColumnDivider` and `RowDivider` to create spacing between widgets. The default spacing is set to 10, but you can modify it in `ui/components/custom_divider.dart`.
 
@@ -65,3 +72,8 @@ PaginatorPage<String>(
 ```
 
 This widget abstracts the pagination logic, making it easier to integrate paginated data while maintaining customization flexibility for different use cases.
+
+## Design Guidance
+- Prefer `CustomCard` for elevated surfaces.
+- Use `CustomImage` for remote images to leverage caching.
+- Use shimmer widgets for loading placeholders.

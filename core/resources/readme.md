@@ -11,6 +11,12 @@ Manages the application's themes, such as ThemeData for light and dark modes. It
 ### `USE THEME FEATURE, DO NOT HARDCODE THE COLORS` 
 Avoid hardcoding colors in your widgets. Instead, leverage the theme's ColorScheme or ThemeData to ensure consistency and adaptability across the application.
 
+## AI Instructions (Resources)
+1. Use `theme(context)`, `textTheme(context)`, and `colorScheme(context)` helpers.
+2. Never introduce hardcoded colors in UI layers.
+3. Update shared styles in `styles.dart` instead of duplicating.
+4. Add new colors to the palette in `colors.dart` only when needed.
+
 To simplify access to theme-related properties, the following utility functions are provided:
 
 * Retrieves the current ThemeData for the application

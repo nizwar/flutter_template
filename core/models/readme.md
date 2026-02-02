@@ -3,6 +3,13 @@ To create models in your project, you can use [Quicktype](https://app.quicktype.
 
 After generating your model, ensure to `extend the Model class` to inherit all the features and benefits provided by it, such as serialization, validation, and other utility functions.
 
+## AI Instructions (Models)
+1. Each model must extend `Model`.
+2. File names should be the entity name in snake case (e.g., `user.dart`).
+3. Keep models immutable when possible.
+4. Avoid UI imports inside models.
+5. If a field is optional, mark it as nullable and handle it safely.
+
 ### Example:
 For consistency and clarity, all file names should follow a strict naming convention without any prefixes or suffixes. Simply use the name of the entity represented in the file.
 

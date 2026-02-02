@@ -16,6 +16,24 @@ Spend 1-2 hours updating the project with the latest SDK, packages, and all. You
 #### 4. Use and Modify
 You can modify the boilerplate as per application requirements, but ensure it remains in the same structure so all of us will be on the same page.
 
+## AI Instructions (Read First)
+Use this project guide as the source of truth. When working on tasks, follow these rules:
+
+1. Respect the architecture: keep the `lib/core` and `lib/ui` separation intact.
+2. Prefer existing utilities/components before creating new ones.
+3. Do not hardcode colors; use ThemeData/ColorScheme helpers.
+4. Avoid deprecated/unused imports and keep warnings at zero.
+5. Provide clear, minimal diffs and keep naming conventions intact.
+
+### AI Deep-Dive Checklist
+When implementing a feature, ensure these are addressed:
+- Models: extend `Model` and place files in `lib/core/models/`.
+- APIs: create a `*_http.dart` file extending `HttpConnection`.
+- State: prefer Provider; add `read`/`watch` static helpers.
+- UI: build screens with `Scaffold`, reuse components, and keep widgets small.
+- Resources: use theme utilities from `lib/core/resources/`.
+- Errors: handle `HttpErrorConnection` at the widget layer.
+
 ## Setup
 Ensure everything is properly set up by using these recommended plugins!
 

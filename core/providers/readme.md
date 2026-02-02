@@ -1,6 +1,13 @@
 # Providers
 Providers stored here are strictly for global variables—data that needs to be accessible throughout the entire application. These providers are useful for managing application-wide states, such as user data, theme settings, or any shared resources.
 
+## AI Instructions (Providers)
+1. Global providers only live in `lib/core/providers` and are registered in `main.dart`.
+2. Add static `read` and `watch` helpers to every provider.
+3. Keep providers small and focused on one responsibility.
+4. Expose immutable state; mutate through methods.
+5. Avoid direct API calls in UI; route them through providers or services.
+
 ## Implementation:
 All global provider declarations should be added inside the main.dart file, ensuring that they are available across the app. This makes the data easily accessible from any part of the application without the need to redeclare or duplicate the logic.
 
