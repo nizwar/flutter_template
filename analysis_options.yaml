@@ -1,0 +1,37 @@
+# Analyzer + lint configuration for the flutter_template boilerplate.
+#
+# The template enforces a "zero warnings" policy (see readme.md / CLAUDE.md).
+# Copy this file to your Flutter project root and ensure `flutter_lints` is in
+# your dev_dependencies:
+#
+#   dev_dependencies:
+#     flutter_lints: ^4.0.0
+#
+# Then run `flutter analyze` and `dart fix --apply` before finishing any task.
+
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  errors:
+    # Treat unused/dead code and deprecated usage as warnings to keep them visible.
+    unused_import: warning
+    unused_local_variable: warning
+    dead_code: warning
+    deprecated_member_use: warning
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/generated_plugin_registrant.dart"
+    - "**/firebase_options.dart"
+
+linter:
+  rules:
+    prefer_const_constructors: true
+    prefer_const_constructors_in_immutables: true
+    prefer_const_declarations: true
+    prefer_final_locals: true
+    avoid_print: true            # use clog/elog/cprint instead
+    use_key_in_widget_constructors: true
+    sized_box_for_whitespace: true
+    avoid_unnecessary_containers: true
+    require_trailing_commas: true

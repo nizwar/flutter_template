@@ -1,171 +1,147 @@
-# Http Connections
-All API calls are managed through the HTTP connections defined in this section. These connections handle communication between the app and the backend, ensuring data is fetched and sent securely.
+# HTTP Connections
+
+All API calls are managed through the HTTP clients defined in this folder. They centralize communication between the app and the backend so requests, headers, and errors are handled consistently.
 
 ## AI Instructions (HTTP)
+
 1. All API files must use the `*_http.dart` suffix and extend `HttpConnection`.
-2. Do not perform UI actions inside `HttpConnection`.
-3. Keep endpoint paths relative to the base URL; update base URL only when needed.
+2. Never perform UI actions (dialogs, navigation, snackbars) inside an `HttpConnection`.
+3. Keep endpoint paths relative to the base URL; only override the base URL when you truly need a different host.
 4. Handle `HttpErrorConnection` at the widget layer with clear user feedback.
 5. Keep request/response models in `lib/core/models` and extend `Model`.
 
-## Implementation Notes (From Code)
-- `HttpConnection` exposes `get`, `post`, `put`, and `delete` with optional `params`, `headers`, and `body`.
-- Base URL is read from `AppConfig.read(context).endpoint` and can be overridden with `updateBaseUrl(url)`.
-- `_preRequestHeaders` is the hook for adding auth headers.
-- All Dio errors are wrapped into `HttpErrorConnection` with Crashlytics logging.
-- `ApiResponse` uses `status`, `message`, and `result` fields.
+## Implementation notes (from code)
 
-The base URL for your API is declared in the `environment`, which means you don't need to specify the full URL for each request. Instead, you only need to provide the path relative to the base URL.
+- `HttpConnection` exposes `get`, `post`, `put`, and `delete`, each accepting optional `params`, `headers`, and (where applicable) `body`.
+- Query parameters are passed as `params` (`Map<String, dynamic>?`) and encoded automatically by Dio — do not hand-build query strings.
+- The base URL is read from `AppConfig.read(context).endpoint` and can be changed at runtime with `updateBaseUrl(url)`.
+- `_preRequestHeaders` injects the `Authorization: Bearer <token>` header automatically from `UserProvider` — you usually don't need to add it manually.
+- Every Dio error is wrapped into `HttpErrorConnection` and logged to Crashlytics.
+- `ApiResponse` has `status` (int), `message` (String?), and `result` (the payload). Use `resp.success` (true for 2xx) and read the payload from `resp.result`.
 
-For example, if the base URL is https://api.example.com, and you want to make a request to the auth/login endpoint, you simply use the path:
+Because the base URL lives in the active `AppConfig`, you only pass the path relative to it. For a base URL of `https://api.example.com`, a login request is simply `post("/auth/login", ...)`.
 
-## API Requests
-Below is an example of how to use the HttpConnection class for making an API call, specifically for logging in a user:
+## API requests
 
-### Simple Request
-For consistency and clarity, file names should follow a strict naming convention. For files related to API calls, ensure to add the _http suffix to indicate that all API processes will be handled within these files.
+### Simple request
 
-Example : A file for handling user-related HTTP requests should be named `user_http.dart.` and the class name will be UserHttp
+Name the file with the `_http` suffix; the class drops the suffix and uses PascalCase. A file handling user requests is `user_http.dart` with the class `UserHttp`.
+
 ```dart
 class UserHttp extends HttpConnection {
-    // The context is passed to the HttpConnection constructor,
-    // which allows access to providers or any data that requires context.
-    UserHttp(BuildContext context) : super(context);
+  // The context is forwarded to HttpConnection so it can read providers/config.
+  UserHttp(BuildContext context) : super(context);
 
-    // Example: Login function
-    Future<User> login({String username, String password}) async {
-        // The 'post' method is inherited from HttpConnection.
-        var resp = await post<ApiResponse>(endpoint + "/login", body: {
-            "username": username,
-            "password": password
-        });
+  // Example: login.
+  Future<User> login({required String username, required String password}) async {
+    // `post` is inherited from HttpConnection.
+    final resp = await post<ApiResponse>("/login", body: {
+      "username": username,
+      "password": password,
+    });
 
-        // ApiResponse is a custom model defined in https/http_connection.dart.
-        // Example API response:
-        // {
-        //   status: 200,
-        //   message: "Success",
-        //   result: {"name": "nizwar", ...}
-        // }
+    // Example API response wrapped by ApiResponse:
+    // { "status": 200, "message": "Success", "result": {"name": "nizwar", ...} }
 
-        // Simple validation: if the response is successful, return a User object.
-        if (resp.success) {
-            return User.fromJson(resp.data);
-        }
+    // The payload lives in `result` (NOT `data`).
+    if (resp.success) return User.fromJson(resp.result);
 
-        return null; // Return null if login fails.
-    }
-}
-```
-
-#### Key Notes:
-1. HttpConnection: A base class for handling HTTP requests. It provides methods like post for making API calls.
-2. UserHttp: An example of extending HttpConnection to handle user-related actions, such as logging in.
-3. ApiResponse: A custom model used for wrapping API responses, allowing easy access to success, message, and data.
-4. User.fromJson: A method that deserializes the response data into a User model.
-5. By centralizing all API interactions within this structure, it ensures consistent, reusable, and maintainable code for handling network requests.
-
-
-### Multipart Form
-To handle file uploads, you can use the post method with FormData to send the file as part of the request body. Here’s an example of how to upload a file:
-```dart
-ApiResponse? response = await post(
-      "api/upload",
-      body: FormData.fromMap({ 
-        "file": await MultipartFile.fromFile(file.path),
-        "other_post_body": "Dummy data",
-      }),
-    );
-```
-
-### Custom URL
-In some cases, you may need to make API calls to an endpoint outside of your base API. This can be easily handled by setting a custom base URL before making the request.
-
-To do so, simply assign the custom URL to the baseUrl property of the dio instance before making any API calls:
-
-```dart
-updateBaseUrl("https://another-base-url.com");// Set custom URL
-```
-
-#### Custom Base URL in a Separate Class
-If you need to make API calls to a different domain within a specific class, you can create a new class that extends HttpConnection and specify a custom base URL directly in the constructor. This allows you to use a different base URL for that particular class while keeping the default base URL for other parts of your application.
-
-```dart
-class AnotherClassWithDifferentBaseURL extends HttpConnection {
-  // Provide a custom base URL for this class
-  AnotherClassWithDifferentBaseURL(BuildContext context) : super(context, baseUrl: "https://another-base-url.com");
-}
-```
-
-### Automate the Authorization
-To automate the process of adding authorization headers to every API request, you can adjust the `_preRequestHeaders` method in the `lib/core/https/http_connection.dart` file. This method will automatically append the necessary headers, such as the authorization token, to every request before it is sent.
-
-Here’s an example of how to add an authorization token to the request headers:
-
-```dart
-Map<String, String>? _preRequestHeaders(Map<String, String>? headers) {
-  // Retrieve the token from your UserProvider (uncomment and adjust as necessary)
-  // var userProvider = UserProvider.read(context);
-  
-  // Check if the token is available, and if so, add it to the headers
-  if (userProvider.auth?.token != null) {
-    if (headers != null) {
-      // Add the Authorization header if headers already exist
-      headers.addEntries([MapEntry("Authorization", "Bearer ${userProvider.auth?.token}")]);
-    } else {
-      // Otherwise, create a new header map with the Authorization header
-      headers = {"Authorization": "Bearer ${userProvider.auth?.token}"};
-    }
+    // Surface failures as a typed exception for the widget layer to handle.
+    throw HttpErrorConnection(status: resp.status, title: "Login", message: resp.message ?? "Login failed");
   }
-  
-  // Return the updated headers
-  return headers;
 }
 ```
 
-### Error Handling
-All API errors are thrown as exceptions of type HttpErrorConnection. This custom exception provides details about the error, including:
+#### Typed `result` deserialization (optional)
 
-1. Status Code: The HTTP status code returned by the server.
-2. Status Message: A message describing the error.
-3. Response: The raw response data from the server.
-
-You can adjust the data structure of HttpErrorConnection to align with how your API represents errors.
+`ApiResponse.fromJson` accepts an optional `fromJsonT` callback to deserialize the `result` payload directly:
 
 ```dart
-try {
-  // API request process
-} on HttpErrorConnection catch (e) {
-  // Handle the error here
-  print("Error occurred: ${e.message}");
-  print("Status code: ${e.statusCode}");
-  print("Response: ${e.response}");
+final resp = ApiResponse<User>.fromJson(json, (data) => User.fromJson(data));
+final User? user = resp.result; // already typed
+```
+
+### Query parameters
+
+```dart
+final resp = await get<ApiResponse>("/search", params: {"q": "hello world", "page": 1});
+// Dio encodes this to /search?q=hello%20world&page=1
+```
+
+### Multipart form (file upload)
+
+Use `FormData` as the request body:
+
+```dart
+final resp = await post<ApiResponse>(
+  "/upload",
+  body: FormData.fromMap({
+    "file": await MultipartFile.fromFile(file.path),
+    "other_field": "Dummy data",
+  }),
+);
+```
+
+### Custom base URL
+
+For a one-off request to a different host, change the base URL before calling:
+
+```dart
+updateBaseUrl("https://another-base-url.com");
+```
+
+For a client that always targets a different host, override it in the constructor body:
+
+```dart
+class ExternalApi extends HttpConnection {
+  ExternalApi(BuildContext context) : super(context) {
+    updateBaseUrl("https://another-base-url.com");
+  }
 }
 ```
 
-#### Best Practices for Error Handling:
-1. Never Show UI Inside HttpConnection:
+### Authorization (automatic)
 
-    Do not show dialogs, navigate to new screens, or perform any UI-related tasks directly within the HttpConnection. Keep the logic for handling UI-level responses at the widget level.
-2. Centralized Error Catching:
+Authorization is already wired: `_preRequestHeaders` reads the token from `UserProvider` and appends `Authorization: Bearer <token>` to every request when a token is present. To enable it, set the token after login:
 
-    Use try-catch blocks at the widget level to catch and handle errors gracefully. 
-    
-For example:
+```dart
+await UserProvider.read(context).setToken(resp.result["access_token"]);
+// later: UserProvider.logout(context); // clears it from memory + storage
+```
+
+If your token lives elsewhere or has a different shape, adjust `_preRequestHeaders` in `lib/core/https/http_connection.dart`.
+
+### Error handling
+
+Network errors are thrown as `HttpErrorConnection`, which exposes:
+
+1. `status` — the HTTP status code (or `-1` when there was no response).
+2. `message` — a human-readable description.
+3. `title` — a short label/category for the error.
+4. `data` — the raw response body from the server (if any).
+5. `body` — the request body that was sent.
+
+Catch it at the widget layer — never inside the HTTP client:
+
 ```dart
 Future<void> loginUser() async {
   try {
     await userHttp.login(username: "user", password: "pass");
   } on HttpErrorConnection catch (e) {
-    showErrorDialog(context, e.message); // Example of handling errors in the widget
+    showErrorDialog(context, e.message); // present a friendly message
   }
 }
 ```
-Customize Error Feedback:
-You can modify the HttpErrorConnection class to extract additional details from your API's error responses, such as specific error codes or messages.
 
-## Checklist for New Endpoints
-- Create a model in `lib/core/models` (extend `Model`)
-- Create a `*_http.dart` file for the endpoint
-- Add a provider if the data is globally shared
-- Add error handling in the screen/widget
+#### Best practices
+
+- **Never show UI inside `HttpConnection`.** Keep dialogs/navigation at the widget level.
+- **Catch centrally per screen** with `try/catch` on `HttpErrorConnection`.
+- **Customize feedback** by reading `e.status`/`e.data` to map specific server error codes to user messages.
+
+## Checklist for new endpoints
+
+- [ ] Create a model in `lib/core/models` (extend `Model`, override `props`).
+- [ ] Create a `*_http.dart` client extending `HttpConnection`.
+- [ ] Add a provider if the data is shared globally.
+- [ ] Handle `HttpErrorConnection` in the screen/widget.

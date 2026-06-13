@@ -1,29 +1,40 @@
-# MODELS
-To create models in your project, you can use [Quicktype](https://app.quicktype.io), a tool that generates classes from JSON data. This tool helps to quickly create models that are ready to use in your application.
+# Models
 
-After generating your model, ensure to `extend the Model class` to inherit all the features and benefits provided by it, such as serialization, validation, and other utility functions.
+Models represent the data structures exchanged with your backend and used across the app. You can hand-write them or generate a starting point from JSON with [Quicktype](https://app.quicktype.io), then adapt it to this template.
+
+Every model **must extend `Model`** to inherit value equality (via Equatable), JSON serialization, and debug helpers.
 
 ## AI Instructions (Models)
+
 1. Each model must extend `Model`.
-2. File names should be the entity name in snake case (e.g., `user.dart`).
-3. Keep models immutable when possible.
-4. Avoid UI imports inside models.
-5. If a field is optional, mark it as nullable and handle it safely.
+2. File names are the entity name in snake_case (e.g., `user.dart`); no prefixes or suffixes.
+3. Keep models immutable (`final` fields) when possible.
+4. Never import UI (`material.dart`, widgets) inside a model.
+5. Mark optional fields nullable and handle them safely in `fromJson`.
+6. **Always override `props`** with the real fields (see performance note below).
 
-## Base Model (What You Get)
-- `Model` extends `Equatable` for value comparison.
-- `toJson()` is required for serialization.
-- `print()` uses `clog()` for debug-only structured logging.
-- `stringify` is enabled to improve debug output.
+## Base model (what you get)
 
-### Example:
-For consistency and clarity, all file names should follow a strict naming convention without any prefixes or suffixes. Simply use the name of the entity represented in the file.
+`Model` extends `Equatable`, so `==`/`hashCode` come from the `props` list. It also provides:
 
-Example: A file containing the User model should be named `user.dart`.
+- `toJson()` — required; you implement it.
+- `toString()` — defaults to `toJson().toString()`.
+- `print()` — logs the model via `clog()` (debug-only, pretty JSON).
+- `stringify` — enabled for readable debug output.
 
-This convention ensures uniformity across the project and makes it easier to locate and identify files.
+### ⚠️ Performance: always override `props`
 
-Suppose you have the following JSON response:
+The base `Model.props` defaults to `[toString()]`, which serializes the entire object to JSON on **every** equality check. That is wasteful (it runs on rebuilds and in large lists) and fragile. For every model, override `props` with the actual fields:
+
+```dart
+@override
+List<Object?> get props => [id, name, email];
+```
+
+## Example
+
+A file containing the `User` model is named `user.dart`. Given this JSON:
+
 ```json
 {
   "id": 1,
@@ -31,30 +42,42 @@ Suppose you have the following JSON response:
   "email": "john.doe@example.com"
 }
 ```
-You can use Quicktype to generate the following model:
+
+Write the model like this:
+
 ```dart
-class User extends Model{
-    final int id;
-    final String name;
-    final String email;
+class User extends Model {
+  final int id;
+  final String name;
+  final String email;
 
-    User({
-        required this.id,
-        required this.name,
-        required this.email,
-    });
+  User({
+    required this.id,
+    required this.name,
+    required this.email,
+  });
 
-    factory User.fromJson(Map<String, dynamic> json) => User(
+  factory User.fromJson(Map<String, dynamic> json) => User(
         id: json["id"],
         name: json["name"],
         email: json["email"],
-    );
+      );
 
-    @override
-    Map<String, dynamic> toJson() => {
+  @override
+  Map<String, dynamic> toJson() => {
         "id": id,
         "name": name,
         "email": email,
-    };
+      };
+
+  // Override props with real fields for fast, correct equality.
+  @override
+  List<Object?> get props => [id, name, email];
 }
 ```
+
+### Tips
+
+- Add a `copyWith` when you need to update a few fields immutably.
+- For nullable JSON, default safely: `count: json["count"] ?? 0`.
+- Nest models by calling their `fromJson` in the parent: `address: Address.fromJson(json["address"])`.

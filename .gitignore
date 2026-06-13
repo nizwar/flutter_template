@@ -1,1 +1,10 @@
+# Secrets / generated Firebase config
 firebase_options.dart
+
+# Generated files
+generated_plugin_registrant.dart
+*.g.dart
+*.freezed.dart
+
+# OS / editor cruft
+.DS_Store

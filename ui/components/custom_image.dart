@@ -47,18 +47,18 @@ class CustomImage extends StatelessWidget {
           fit: StackFit.expand,
           alignment: Alignment.center,
           children: <Widget>[
-            CachedNetworkImage(
-              fit: fit!,
-              imageUrl: url!,
-              placeholder: (context, string) => Container(
-                alignment: Alignment.center,
-                child: ShimmeringObject(radius: borderRadius ?? BorderRadius.circular(0.0)),
+            if (url == null || url!.isEmpty)
+              _buildError(context)
+            else
+              CachedNetworkImage(
+                fit: fit ?? BoxFit.cover,
+                imageUrl: url!,
+                placeholder: (context, string) => Container(
+                  alignment: Alignment.center,
+                  child: ShimmeringObject(radius: borderRadius ?? BorderRadius.circular(0.0)),
+                ),
+                errorWidget: (context, string, obj) => _buildError(context),
               ),
-              errorWidget: (context, string, obj) {
-                if (errorAssets == null) return Center(child: Icon(Icons.error_outline));
-                return Image.asset(errorAssets!, fit: BoxFit.cover);
-              },
-            ),
             if (showBlackGradient)
               Container(
                 decoration: BoxDecoration(
@@ -69,5 +69,10 @@ class CustomImage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildError(BuildContext context) {
+    if (errorAssets == null) return const Center(child: Icon(Icons.error_outline));
+    return Image.asset(errorAssets!, fit: BoxFit.cover);
   }
 }

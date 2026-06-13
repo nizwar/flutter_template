@@ -8,19 +8,12 @@ import '../../ui/components/custom_card.dart';
 extension WidgetExtensions on Widget {
   /// A widget that dismisses the keyboard when tapped.
   ///
-  /// This widget can be used to wrap other widgets to provide the functionality
-  /// of dismissing the keyboard when the user taps outside of a text field.
+  /// Wrap other widgets to hide the keyboard when the user taps outside of a
+  /// text field — useful on forms with multiple inputs.
   ///
-  /// Example usage:
   /// ```dart
   /// anyWidget.dismissKeyboardOnTap(context);
   /// ```
-  ///
-  /// This is particularly useful in forms or screens with multiple input fields
-  /// where you want to hide the keyboard when the user taps outside of the input fields.
-  ///
-  /// Parameters:
-  /// - `context`: The build context of the widget.
   Widget dismissKeyboardOnTap(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -30,200 +23,177 @@ extension WidgetExtensions on Widget {
 }
 
 extension FutureProgressDialog<T> on Future<T> {
-  /// Displays a custom progress dialog.
+  /// Displays a custom progress dialog while this future is pending.
   ///
-  /// This method shows a custom progress dialog in the given [context].
-  ///
-  /// Returns a [Future] that completes with a value of type [T] or `null`
-  /// when the dialog is dismissed.
-  ///
-  /// [context] - The build context in which to show the progress dialog.
+  /// Returns the future's value, or `null` when the dialog is dismissed.
   Future<T?> showProgress(BuildContext context) => showCustomProgressDialog(
-    context,
-    loadingWidget: CustomCard(
-      padding: const EdgeInsets.all(15),
-      child: const AdaptiveProgressIndicator(),
-    ),
-  );
+        context,
+        loadingWidget: CustomCard(
+          padding: const EdgeInsets.all(15),
+          child: const AdaptiveProgressIndicator(),
+        ),
+      );
 }
 
+/// Locale-aware [DateTime] formatting helpers built on `intl`'s [DateFormat].
+///
+/// Each method accepts a [BuildContext] (used to resolve the active locale via
+/// [Localizations]) and an optional [locale] override as an ICU locale string
+/// such as `"id_ID"` or `"en_US"`. When neither is available, `intl` falls back
+/// to its default locale.
+///
+/// ```dart
+/// DateTime.now().yMMMMd(context);            // uses app locale
+/// DateTime.now().yMMMMd(context, locale: 'id'); // forces Indonesian
+/// ```
 extension DateTimeExtensions on DateTime {
-  /// Formats the date as a day of the month (1-31).
-  String d(BuildContext context, {Locale? locale}) =>
-      DateFormat.d(locale).format(this);
+  String _loc(BuildContext context, String? locale) =>
+      locale ?? Localizations.maybeLocaleOf(context)?.toString() ?? Intl.getCurrentLocale();
 
-  /// Formats the date as an abbreviated day of the week (Mon, Tue, etc.).
-  String E(BuildContext context, {Locale? locale}) =>
-      DateFormat.E(locale).format(this);
+  /// Day of the month (1-31).
+  String d(BuildContext context, {String? locale}) => DateFormat.d(_loc(context, locale)).format(this);
 
-  /// Formats the date as a full day of the week (Monday, Tuesday, etc.).
+  /// Abbreviated day of the week (Mon, Tue, ...).
+  String E(BuildContext context, {String? locale}) => DateFormat.E(_loc(context, locale)).format(this);
+
+  /// Full day of the week (Monday, Tuesday, ...).
   // ignore: non_constant_identifier_names
-  String EEEE(BuildContext context, {Locale? locale}) =>
-      DateFormat.EEEE(locale).format(this);
+  String EEEE(BuildContext context, {String? locale}) => DateFormat.EEEE(_loc(context, locale)).format(this);
 
-  /// Formats the date as a narrow day of the week (M, T, etc.).
+  /// Narrow day of the week (M, T, ...).
   // ignore: non_constant_identifier_names
-  String EEEEE(BuildContext context, {Locale? locale}) =>
-      DateFormat.EEEEE(locale).format(this);
+  String EEEEE(BuildContext context, {String? locale}) => DateFormat.EEEEE(_loc(context, locale)).format(this);
 
-  /// Formats the date as an abbreviated month (Jan, Feb, etc.).
+  /// Abbreviated month (Jan, Feb, ...).
   // ignore: non_constant_identifier_names
-  String LLL(BuildContext context, {Locale? locale}) =>
-      DateFormat.LLL(locale).format(this);
+  String LLL(BuildContext context, {String? locale}) => DateFormat.LLL(_loc(context, locale)).format(this);
 
-  /// Formats the date as a full month (January, February, etc.).
+  /// Full month (January, February, ...).
   // ignore: non_constant_identifier_names
-  String LLLL(BuildContext context, {Locale? locale}) =>
-      DateFormat.LLLL(locale).format(this);
+  String LLLL(BuildContext context, {String? locale}) => DateFormat.LLLL(_loc(context, locale)).format(this);
 
-  /// Formats the date as a numeric month (1-12).
-  String M(BuildContext context, {Locale? locale}) =>
-      DateFormat.M(locale).format(this);
+  /// Numeric month (1-12).
+  String M(BuildContext context, {String? locale}) => DateFormat.M(_loc(context, locale)).format(this);
 
-  /// Formats the date as a numeric month and day (MM/dd).
+  /// Numeric month and day.
   // ignore: non_constant_identifier_names
-  String Md(BuildContext context, {Locale? locale}) =>
-      DateFormat.Md(locale).format(this);
+  String Md(BuildContext context, {String? locale}) => DateFormat.Md(_loc(context, locale)).format(this);
 
-  /// Formats the date as an abbreviated day of the week, numeric month, and day (EEE, MM/dd).
+  /// Abbreviated weekday, numeric month and day.
   // ignore: non_constant_identifier_names
-  String MEd(BuildContext context, {Locale? locale}) =>
-      DateFormat.MEd(locale).format(this);
+  String MEd(BuildContext context, {String? locale}) => DateFormat.MEd(_loc(context, locale)).format(this);
 
-  /// Formats the date as an abbreviated month and day (MMM dd).
+  /// Abbreviated month and day.
   // ignore: non_constant_identifier_names
-  String MMM(BuildContext context, {Locale? locale}) =>
-      DateFormat.MMM(locale).format(this);
+  String MMM(BuildContext context, {String? locale}) => DateFormat.MMM(_loc(context, locale)).format(this);
 
-  /// Formats the date as an abbreviated month, day, and year (MMM dd, yyyy).
+  /// Abbreviated month and day.
   // ignore: non_constant_identifier_names
-  String MMMd(BuildContext context, {Locale? locale}) =>
-      DateFormat.MMMd(locale).format(this);
+  String MMMd(BuildContext context, {String? locale}) => DateFormat.MMMd(_loc(context, locale)).format(this);
 
-  /// Formats the date as an abbreviated day of the week, month, and day (EEE, MMM dd).
+  /// Abbreviated weekday, month and day.
   // ignore: non_constant_identifier_names
-  String MMMEd(BuildContext context, {Locale? locale}) =>
-      DateFormat.MMMEd(locale).format(this);
+  String MMMEd(BuildContext context, {String? locale}) => DateFormat.MMMEd(_loc(context, locale)).format(this);
 
-  /// Formats the date as a full month (MMMM).
+  /// Full month.
   // ignore: non_constant_identifier_names
-  String MMMM(BuildContext context, {Locale? locale}) =>
-      DateFormat.MMMM(locale).format(this);
+  String MMMM(BuildContext context, {String? locale}) => DateFormat.MMMM(_loc(context, locale)).format(this);
 
-  /// Formats the date as a full month and day (MMMM dd).
+  /// Full month and day.
   // ignore: non_constant_identifier_names
-  String MMMMd(BuildContext context, {Locale? locale}) =>
-      DateFormat.MMMMd(locale).format(this);
+  String MMMMd(BuildContext context, {String? locale}) => DateFormat.MMMMd(_loc(context, locale)).format(this);
 
-  /// Formats the date as a full day of the week, month, and day (EEEE, MMMM dd).
+  /// Full weekday, month and day.
   // ignore: non_constant_identifier_names
-  String MMMMEEEEd(BuildContext context, {Locale? locale}) =>
-      DateFormat.MMMMEEEEd(locale).format(this);
+  String MMMMEEEEd(BuildContext context, {String? locale}) => DateFormat.MMMMEEEEd(_loc(context, locale)).format(this);
 
-  /// Formats the date as an abbreviated quarter (Q1, Q2, etc.).
+  /// Abbreviated quarter (Q1, Q2, ...).
   // ignore: non_constant_identifier_names
-  String QQQ(BuildContext context, {Locale? locale}) =>
-      DateFormat.QQQ(locale).format(this);
+  String QQQ(BuildContext context, {String? locale}) => DateFormat.QQQ(_loc(context, locale)).format(this);
 
-  /// Formats the date as a full quarter (1st quarter, 2nd quarter, etc.).
+  /// Full quarter (1st quarter, ...).
   // ignore: non_constant_identifier_names
-  String QQQQ(BuildContext context, {Locale? locale}) =>
-      DateFormat.QQQQ(locale).format(this);
+  String QQQQ(BuildContext context, {String? locale}) => DateFormat.QQQQ(_loc(context, locale)).format(this);
 
-  /// Formats the date as a numeric year (yyyy).
-  String y(BuildContext context, {Locale? locale}) =>
-      DateFormat.y(locale).format(this);
+  /// Numeric year.
+  String y(BuildContext context, {String? locale}) => DateFormat.y(_loc(context, locale)).format(this);
 
-  /// Formats the date as a numeric year and month (yyyy-MM).
-  String yM(BuildContext context, {Locale? locale}) =>
-      DateFormat.yM(locale).format(this);
-
-  /// Formats the date as a numeric year, month, and day (yyyy-MM-dd).
-  String yMd(BuildContext context, {Locale? locale}) =>
-      DateFormat.yMd(locale).format(this);
-
-  /// Formats the date as an abbreviated day of the week, numeric year, month, and day (EEE, yyyy-MM-dd).
-  String yMEd(BuildContext context, {Locale? locale}) =>
-      DateFormat.yMEd(locale).format(this);
-
-  /// Formats the date as an abbreviated year, month, and day (MMM yyyy).
-  String yMMM(BuildContext context, {Locale? locale}) =>
-      DateFormat.yMMM(locale).format(this);
-
-  /// Formats the date as an abbreviated year, month, and day (MMM dd, yyyy).
-  String yMMMd(BuildContext context, {Locale? locale}) =>
-      DateFormat.yMMMd(locale).format(this);
-
-  /// Formats the date as an abbreviated day of the week, year, month, and day (EEE, MMM dd, yyyy).
-  String yMMMEd(BuildContext context, {Locale? locale}) =>
-      DateFormat.yMMMEd(locale).format(this);
-
-  /// Formats the date as a full year and month (MMMM yyyy).
-  String yMMMM(BuildContext context, {Locale? locale}) =>
-      DateFormat.yMMMM(locale).format(this);
-
-  /// Formats the date as a full year, month, and day (MMMM dd, yyyy).
-  String yMMMMd(BuildContext context, {Locale? locale}) =>
-      DateFormat.yMMMMd(locale).format(this);
-
-  /// Formats the date as a full day of the week, year, month, and day (EEEE, MMMM dd, yyyy).
-  String yMMMMEEEEd(BuildContext context, {Locale? locale}) =>
-      DateFormat.yMMMMEEEEd(locale).format(this);
-
-  /// Formats the date as an abbreviated year and quarter (Q1 yyyy).
-  String yQQQ(BuildContext context, {Locale? locale}) =>
-      DateFormat.yQQQ(locale).format(this);
-
-  /// Formats the date as a full year and quarter (1st quarter yyyy).
-  String yQQQQ(BuildContext context, {Locale? locale}) =>
-      DateFormat.yQQQQ(locale).format(this);
-
-  /// Formats the time as a 24-hour clock hour (0-23).
-  String H(BuildContext context, {Locale? locale}) =>
-      DateFormat.H(locale).format(this);
-
-  /// Formats the time as a 24-hour clock hour and minute (HH:mm).
+  /// Numeric year and month.
   // ignore: non_constant_identifier_names
-  String Hm(BuildContext context, {Locale? locale}) =>
-      DateFormat.Hm(locale).format(this);
+  String yM(BuildContext context, {String? locale}) => DateFormat.yM(_loc(context, locale)).format(this);
 
-  /// Formats the time as a 24-hour clock hour, minute, and second (HH:mm:ss).
+  /// Numeric year, month and day.
   // ignore: non_constant_identifier_names
-  String Hms(BuildContext context, {Locale? locale}) =>
-      DateFormat.Hms(locale).format(this);
+  String yMd(BuildContext context, {String? locale}) => DateFormat.yMd(_loc(context, locale)).format(this);
 
-  /// Formats the time as a 12-hour clock hour (1-12).
-  String j(BuildContext context, {Locale? locale}) =>
-      DateFormat.j(locale).format(this);
+  /// Abbreviated weekday, numeric year, month and day.
+  // ignore: non_constant_identifier_names
+  String yMEd(BuildContext context, {String? locale}) => DateFormat.yMEd(_loc(context, locale)).format(this);
 
-  /// Formats the time as a 12-hour clock hour and minute (h:mm a).
-  String jm(BuildContext context, {Locale? locale}) =>
-      DateFormat.jm(locale).format(this);
+  /// Abbreviated year, month and day.
+  // ignore: non_constant_identifier_names
+  String yMMM(BuildContext context, {String? locale}) => DateFormat.yMMM(_loc(context, locale)).format(this);
 
-  /// Formats the time as a 12-hour clock hour, minute, and second (h:mm:ss a).
-  String jms(BuildContext context, [Locale? locale]) =>
-      DateFormat.jms([locale]).format(this);
+  /// Abbreviated year, month and day.
+  // ignore: non_constant_identifier_names
+  String yMMMd(BuildContext context, {String? locale}) => DateFormat.yMMMd(_loc(context, locale)).format(this);
+
+  /// Abbreviated weekday, year, month and day.
+  // ignore: non_constant_identifier_names
+  String yMMMEd(BuildContext context, {String? locale}) => DateFormat.yMMMEd(_loc(context, locale)).format(this);
+
+  /// Full year and month.
+  // ignore: non_constant_identifier_names
+  String yMMMM(BuildContext context, {String? locale}) => DateFormat.yMMMM(_loc(context, locale)).format(this);
+
+  /// Full year, month and day.
+  // ignore: non_constant_identifier_names
+  String yMMMMd(BuildContext context, {String? locale}) => DateFormat.yMMMMd(_loc(context, locale)).format(this);
+
+  /// Full weekday, year, month and day.
+  // ignore: non_constant_identifier_names
+  String yMMMMEEEEd(BuildContext context, {String? locale}) => DateFormat.yMMMMEEEEd(_loc(context, locale)).format(this);
+
+  /// Abbreviated year and quarter.
+  // ignore: non_constant_identifier_names
+  String yQQQ(BuildContext context, {String? locale}) => DateFormat.yQQQ(_loc(context, locale)).format(this);
+
+  /// Full year and quarter.
+  // ignore: non_constant_identifier_names
+  String yQQQQ(BuildContext context, {String? locale}) => DateFormat.yQQQQ(_loc(context, locale)).format(this);
+
+  /// 24-hour clock hour (0-23).
+  // ignore: non_constant_identifier_names
+  String H(BuildContext context, {String? locale}) => DateFormat.H(_loc(context, locale)).format(this);
+
+  /// 24-hour clock hour and minute.
+  // ignore: non_constant_identifier_names
+  String Hm(BuildContext context, {String? locale}) => DateFormat.Hm(_loc(context, locale)).format(this);
+
+  /// 24-hour clock hour, minute and second.
+  // ignore: non_constant_identifier_names
+  String Hms(BuildContext context, {String? locale}) => DateFormat.Hms(_loc(context, locale)).format(this);
+
+  /// 12-hour clock hour (1-12).
+  String j(BuildContext context, {String? locale}) => DateFormat.j(_loc(context, locale)).format(this);
+
+  /// 12-hour clock hour and minute.
+  String jm(BuildContext context, {String? locale}) => DateFormat.jm(_loc(context, locale)).format(this);
+
+  /// 12-hour clock hour, minute and second.
+  String jms(BuildContext context, {String? locale}) => DateFormat.jms(_loc(context, locale)).format(this);
 }
 
 extension StringExtensions on String {
-  /// An extension property that capitalizes the first letter of a string.
-  ///
-  /// Returns a new string with the first letter converted to uppercase and the
-  /// remaining letters unchanged. If the string is empty, it returns the
-  /// original string.
+  /// Capitalizes the first letter of each space-separated word, lower-casing
+  /// the rest. Returns the original string when empty.
   String get capitalize {
     if (contains(" ")) {
       return split(' ')
-          .map(
-            (word) => word.isNotEmpty
-                ? word[0].toUpperCase() + word.substring(1).toLowerCase()
-                : '',
-          ) // Capitalize the first letter and make the rest lowercase
+          .map((word) => word.isNotEmpty ? word[0].toUpperCase() + word.substring(1).toLowerCase() : '')
           .join(' ');
     } else {
-      return isNotEmpty
-          ? this[0].toUpperCase() + substring(1).toLowerCase()
-          : '';
+      return isNotEmpty ? this[0].toUpperCase() + substring(1).toLowerCase() : '';
     }
   }
 }

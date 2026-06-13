@@ -1,79 +1,76 @@
 # Components
-Components are reusable widgets designed to prevent repetitive code and simplify the development process. They can be easily called and utilized anywhere they are needed, promoting consistency and maintainability across the project.
+
+Reusable widgets that prevent duplication and keep the UI consistent. Reach for these before building something new.
 
 ## AI Instructions (Components)
-1. Keep components stateless unless local state is required.
-2. Use theme helpers for colors and text styles.
+
+1. Keep components stateless unless local state is genuinely required.
+2. Use theme helpers (`theme/textTheme/colorScheme(context)`) for colors and text — never hardcode.
 3. Favor composability: accept `child`, `builder`, or `content` parameters.
-4. Avoid tight coupling to a single screen or feature.
-5. Document component usage with a short example when adding a new one.
+4. Avoid coupling a component to a single screen or feature.
+5. Add a short usage example when introducing a new component.
+
+## Available components
 
 ### Custom Divider
-Utilize `ColumnDivider` and `RowDivider` to create spacing between widgets. The default spacing is set to 10, but you can modify it in `ui/components/custom_divider.dart`.
+`ColumnDivider` and `RowDivider` add spacing between widgets (default `space: 10`). Pass `color` to draw a visible line.
 
-### Shimmer Effects
-Our shimmer utilities include `ShimmerObject`, `ShimmeringObject`, and `ShimmerContainer`. 
+```dart
+Column(children: [WidgetA(), const ColumnDivider(space: 16), WidgetB()]);
+```
 
-#### To implement shimmer effects:
-
-Use `ShimmerContainer` to group your `ShimmerObjects` or any other widgets.
-For standalone shimmering widgets, opt for `ShimmeringObject`.
+### Shimmer effects
+- `ShimmerObject` — a plain placeholder box.
+- `ShimmeringObject` — a box already wrapped in the shimmer animation (use standalone).
+- `ShimmerContainer` — wraps arbitrary children in the shimmer animation; group several `ShimmerObject`s inside it.
 
 ### Custom Image
-The `CustomImage` widget simplifies the process of displaying images using `cached_network_image`. It provides an easy and efficient solution for handling images.
+`CustomImage` displays remote images via `cached_network_image`, with a shimmer placeholder and an error fallback. It safely handles a null/empty `url` (shows the error widget instead of crashing) and supports `zoomOnTap`, `borderRadius`, `boxShape`, and an optional `errorAssets` image.
+
+```dart
+CustomImage(url: user.avatarUrl, height: 64, width: 64, boxShape: BoxShape.circle, zoomOnTap: true);
+```
 
 ### Custom Card
-Need enhanced shadow effects compared to the default Card widget? Use CustomCard for a more visually appealing result.
+`CustomCard` is an elevated surface with a softer shadow than the default `Card`. Accepts `borderRadius`, `backgroundColor`, `margin`, `padding`, `boxShadow`, and `child`.
+
+### Adaptive Progress Indicator
+`AdaptiveProgressIndicator` renders a Cupertino spinner on iOS/macOS and a Material one elsewhere. It is Web-safe (uses `defaultTargetPlatform`, not `dart:io`).
 
 ### Paginator Page
-The Paginator Page widget provides a quick and efficient way to implement paginated lists in your application. It simplifies handling pagination with minimal configuration and allows seamless integration with API responses.
+`PaginatorPage<T>` implements pull-to-refresh + infinite-scroll pagination with minimal setup, and builds rows lazily via `ListView.builder`.
 
-#### Features:
-- `future`: A function that returns a `List` of the specified type, with pagination controlled by the page and limit parameters.
-- `itemBuilder`: A builder function that customizes each list item, utilizing index and T item to define the UI for each data entry.
-- `emptyBuilder`: A widget builder displayed when the list is empty.
-- `loadingBuilder`: A widget builder shown during initial loading or when a refresh is triggered.
-- `limit`: Specifies the number of items per page. This value is passed to the future function for pagination.
-- `prefixChildren`: A list of widgets displayed before the paginated data items, useful for adding headers or introductory content.
-- `padding`: Configures the padding around the list for proper layout and spacing.
-- `paginated`: A flag indicating whether the list supports pagination. If false, no pull-to-refresh or load-more functionality will be enabled.
-- `refreshController`: A controller that manages refresh and load-more actions to handle user interactions with the paginated list.
+#### Parameters
 
-#### Example:
-```dart 
+- `future` — `Future<List<T>> Function(int page, int limit)`; fetch one page.
+- `itemBuilder` — `Widget Function(int index, T item, RefreshController controller)`; build a row.
+- `emptyBuilder` — `Widget Function(BuildContext context, RefreshController controller)?`; shown when there's no data.
+- `loadingBuilder` — `Widget Function(BuildContext context, RefreshController controller)?`; shown during initial load/refresh.
+- `limit` — items per page (default `10`), passed to `future`.
+- `prefixChildren` — widgets rendered before the data (e.g. a header).
+- `padding` — list padding.
+- `paginated` — enable/disable pull-up load-more (default `true`).
+- `refreshController` — optional external `RefreshController`.
+
+#### Example
+
+```dart
 PaginatorPage<String>(
-  future: (page, limit) async {
-    // Example API call that returns a paginated list of items.
-    return await fetchData(page: page, limit: limit); 
-  },
-  itemBuilder: (context, index, item) {
-    // Custom item builder for the list.
-    return ListTile(
-      title: Text(item),
-    );
-  },
-  emptyBuilder: (context) {
-    return Center(child: Text("No items found."));
-  },
-  loadingBuilder: (context) {
-    return Center(child: CircularProgressIndicator());
-  },
-  limit: 10, // Number of items per page
-  prefixChildren: [
-    Padding(
-      padding: EdgeInsets.all(8),
-      child: Text("Paginated List"),
-    ),
+  future: (page, limit) async => fetchData(page: page, limit: limit),
+  itemBuilder: (index, item, controller) => ListTile(title: Text(item)),
+  emptyBuilder: (context, controller) => const Center(child: Text("No items found.")),
+  loadingBuilder: (context, controller) => const Center(child: AdaptiveProgressIndicator()),
+  limit: 10,
+  prefixChildren: const [
+    Padding(padding: EdgeInsets.all(8), child: Text("Paginated List")),
   ],
-  padding: EdgeInsets.all(8),
-  paginated: true,
-  refreshController: RefreshController(initialRefresh: false),
+  padding: const EdgeInsets.all(8),
 )
 ```
 
-This widget abstracts the pagination logic, making it easier to integrate paginated data while maintaining customization flexibility for different use cases.
+## Design guidance
 
-## Design Guidance
 - Prefer `CustomCard` for elevated surfaces.
 - Use `CustomImage` for remote images to leverage caching.
-- Use shimmer widgets for loading placeholders.
+- Use the shimmer widgets for loading placeholders.
+- Show `AdaptiveProgressIndicator` (or `future.showProgress(context)`) for in-flight work.

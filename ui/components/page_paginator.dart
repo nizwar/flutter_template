@@ -108,12 +108,17 @@ class PaginatorPageState<T> extends State<PaginatorPage<T>> with AutomaticKeepAl
           );
         }
       } else {
-        body = ListView(
-          padding: widget.padding ?? EdgeInsets.all(10).copyWith(bottom: 120),
-          children: [
-            ...widget.prefixChildren,
-            ...List.generate(data.length, (index) => widget.itemBuilder.call(index, data[index], refreshController)),
-          ],
+        // Lazy build: only visible rows are constructed. Prefix children share
+        // the same list and are offset by their count.
+        final prefixCount = widget.prefixChildren.length;
+        body = ListView.builder(
+          padding: widget.padding ?? const EdgeInsets.all(10).copyWith(bottom: 120),
+          itemCount: prefixCount + data.length,
+          itemBuilder: (context, index) {
+            if (index < prefixCount) return widget.prefixChildren[index];
+            final dataIndex = index - prefixCount;
+            return widget.itemBuilder.call(dataIndex, data[dataIndex], refreshController);
+          },
         );
       }
     }

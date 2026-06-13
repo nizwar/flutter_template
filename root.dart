@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
+import 'core/providers/theme_provider.dart';
 import 'ui/screens/splash_screen.dart';
 
 class Root extends StatefulWidget {
@@ -17,6 +18,10 @@ class RootState extends State<Root> {
       ///TODO: Do your async task here like loading data from API, local storage, etc.
       ///After your task is complete, navigate to the main screen
 
+      // Restore the user's persisted theme preference before showing the app.
+      await ThemeProvider.read(context).loadPersisted();
+
+      if (!mounted) return;
       context.goNamed("home");
     });
     super.initState();

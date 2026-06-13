@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'core/providers/theme_provider.dart';
+import 'core/providers/user_provider.dart';
 import 'core/resources/environment.dart';
 import 'core/resources/themes.dart';
 import 'core/utils/app_config.dart';
@@ -30,6 +31,7 @@ class Application extends StatelessWidget {
       providers: [
         ///TODO: Add your global providers here
         ChangeNotifierProvider(create: (context) => ThemeProvider(AppConfig.read(context).color)),
+        ChangeNotifierProvider(create: (context) => UserProvider()),
 
         Provider(create: (context) => getRouter(context), dispose: (_, router) => router.dispose()),
       ],

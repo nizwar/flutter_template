@@ -1,59 +1,74 @@
 # Utilities
-Utilities serve as helper functions and tools designed to simplify and streamline development tasks. These reusable functions can be easily accessed and utilized throughout the project.
+
+Helper functions, extensions, and small services that simplify everyday development. They are reusable and shared across the project.
 
 ## AI Instructions (Utilities)
-1. Keep utilities pure and side-effect free when possible.
-2. Avoid UI dependencies in utility files.
+
+1. Keep utilities pure and side-effect free where possible.
+2. Avoid UI dependencies in utility files (except intentional `Widget`/`BuildContext` extensions).
 3. Prefer extensions for small, reusable helpers.
-4. Add logging through `logger.dart` instead of `print`.
+4. Log through `logger.dart`, never `print`.
 
-This directory contains five essential files to aid in development:
+## Extensions (`extensions.dart`)
 
-## Extensions
-Provides custom extensions to enhance existing classes and simplify common operations.
+- `Widget.dismissKeyboardOnTap(context)` — wrap a widget to unfocus the keyboard on tap.
+- `Future<T>.showProgress(context)` — show a progress dialog while the future runs; returns its value.
+- `DateTime` formatters — `yMd(context)`, `MMMd(context)`, `Hm(context)`, `jm(context)`, etc. Each takes the `BuildContext` (used to resolve the active locale via `Localizations`) and an optional `locale:` override as an ICU string (e.g. `'id_ID'`):
+  ```dart
+  DateTime.now().yMMMMd(context);             // app locale
+  DateTime.now().yMMMMd(context, locale: 'id'); // forced
+  ```
+- `String.capitalize` — title-cases each word.
 
-### Available Extensions
-- `Widget.dismissKeyboardOnTap(context)` for keyboard dismissal on tap.
-- `Future<T>.showProgress(context)` to show a progress dialog while awaiting a future.
-- `DateTime` format helpers (e.g., `yMd()`, `MMM()`, `Hm()`, etc.).
-- `String.capitalize` to title-case words in a string.
+## Logger (`logger.dart`)
 
-## Logger
-A logging utility for debugging and tracking application behavior.
+- `clog(object)` — debug-only structured logging (pretty JSON for `Map`/`List`).
+- `elog(object)` — logs in debug; reports to Crashlytics in release.
+- `cprint(object)` — lightweight `debugPrint` in debug only.
 
-### Logging Helpers
-- `clog(object)` for debug-only structured logging.
-- `elog(object)` for error logging and Crashlytics reporting in release.
-- `cprint(object)` for lightweight debug prints.
+## Navigations (`navigations.dart`)
 
-## Navigations
-Simplifies navigation logic with predefined methods for seamless screen transitions.
+Imperative `Navigator` helpers (use go_router via `route.dart` for declarative routing):
 
-### Navigation Helpers
-- `startScreen(context, screen)` to push a new screen.
-- `replaceScreen(context, screen)` to replace the current screen.
-- `closeScreen(context, result)` to pop with optional result.
+- `startScreen(context, screen)` — push a new screen.
+- `replaceScreen(context, screen)` — replace the current screen.
+- `closeScreen(context, [result])` — pop with an optional result.
 
-## Preferences
-Handles shared preferences for storing and retrieving persistent data easily.
+## Preferences (`preferences.dart`)
 
-### Preferences Notes
-- Use `Preferences.instance()` to obtain the shared instance.
-- Current keys include `token` (string). Extend carefully to avoid key collisions.
+A thin wrapper over `SharedPreferences`.
 
-## Utils
-A collection of miscellaneous utility functions that don't fit into other categories but are essential for development.
+```dart
+final prefs = await Preferences.instance();
+prefs.token = 'abc123';            // setter; passing null removes the key
+await prefs.saveToken('abc123');   // awaitable variant
+final String? token = prefs.token;
+await prefs.clearToken();          // remove just the token
+await prefs.clear();               // wipe everything
+```
 
-## AppConfig
-`app_config.dart` provides an environment-aware configuration with `endpoint`, `appName`, and `color`.
-- `AppConfig.read(context)` retrieves the active config.
-- `AppConfig.builder(config, builder)` injects config into the widget tree.
-- `AppConfig.switchConfig(context, config)` updates the active config and notifies listeners.
+- Built-in keys: `token` and `themeModeIndex` (used by `ThemeProvider`).
+- Add new keys as `static const` to avoid collisions and typos.
 
-### Utility Helpers
-- `getMaterialColor(color)` to generate a `MaterialColor` swatch from any color.
-- `size(context)` to read `MediaQuery` size.
-- `randomString(length)` to generate a random alphanumeric string.
+## AppConfig (`app_config.dart`)
 
-## Routing
-`route.dart` defines the app router using `go_router` with `root` and `home` routes. Keep route names stable and update this file when adding new navigation paths.
+Environment-aware config exposing `endpoint`, `appName`, and `color`.
+
+- `AppConfig.read(context)` — read the active config.
+- `AppConfig.builder(config, builder)` — inject a config into the widget tree (used in `main.dart`).
+- `AppConfig.switchConfig(context, newConfig)` — copy `newConfig`'s fields into the active config and notify listeners.
+
+## Utils (`utils.dart`)
+
+- `getMaterialColor(color)` — generate a `MaterialColor` swatch from any `Color`.
+- `size(context)` — shorthand for `MediaQuery.of(context).size`.
+- `randomString(length)` — random alphanumeric string.
+- Re-exports `navigations.dart` and `preferences.dart` for convenience.
+
+## Routing (`route.dart`)
+
+Defines the app router with `go_router`. Ships with `root` (`/`) and `home` (`/home`) routes.
+
+- Add new routes as `GoRoute` entries in `getRouter()`.
+- Navigate with `context.goNamed("home")` / `context.pushNamed(...)`.
+- Keep route names stable; other code references them by name.

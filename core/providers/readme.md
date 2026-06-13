@@ -1,66 +1,72 @@
 # Providers
-Providers stored here are strictly for global variables—data that needs to be accessible throughout the entire application. These providers are useful for managing application-wide states, such as user data, theme settings, or any shared resources.
+
+This folder holds **global** providers — state that needs to be reachable from anywhere in the app, such as the authenticated user/session and theme settings. Widget- or screen-specific state should stay local (next to the widget), not here.
 
 ## AI Instructions (Providers)
+
 1. Global providers only live in `lib/core/providers` and are registered in `main.dart`.
 2. Add static `read` and `watch` helpers to every provider.
-3. Keep providers small and focused on one responsibility.
-4. Expose immutable state; mutate through methods.
-5. Avoid direct API calls in UI; route them through providers or services.
+3. Keep each provider small and focused on one responsibility.
+4. Expose immutable state; mutate it through methods that call `notifyListeners()`.
+5. Don't call APIs directly from the UI; route them through providers or `*_http.dart` clients.
 
-## Current Providers (From Code)
+## Current providers (from code)
+
 ### ThemeProvider
-- Requires a `Color` swatch in the constructor.
+
+- Takes a `Color` swatch in its constructor (the swatch is generated once and cached).
 - Exposes `themeMode`, `colorSwatch`, and `isDarkMode(context)`.
-- Use `setThemeMode(ThemeMode)` to update and notify listeners.
+- `setThemeMode(ThemeMode)` updates the mode, notifies listeners, and **persists** the choice to `Preferences`.
+- `loadPersisted()` restores the saved mode at startup (called from `Root.initState`).
 - Static helpers: `read(context)`, `watch(context)`, and `theme(context)`.
 
 ### UserProvider
-- Holds a nullable `token` and notifies on change.
-- Includes a `logout(context)` placeholder for sign-out logic.
+
+- Holds a nullable `token` and exposes `isLoggedIn`.
+- `setToken(token)` stores it in memory and persists it; `load()` restores it from storage.
+- `logout(context)` clears the token from both memory and storage.
+- The token is injected automatically as `Authorization: Bearer <token>` by `HttpConnection`.
 - Static helpers: `read(context)` and `watch(context)`.
 
-## Implementation:
-All global provider declarations should be added inside the main.dart file, ensuring that they are available across the app. This makes the data easily accessible from any part of the application without the need to redeclare or duplicate the logic.
+## Registering a provider
 
-### Simplifying Provider Access:
-To streamline access to providers, include static methods (`read` and `watch`) within each provider. This makes it easier to retrieve or listen to provider values without redundant code.
+Declare global providers in the `MultiProvider` in `main.dart` so they're available app-wide:
 
 ```dart
-// Static methods for simplified access
-static UserProvider read(BuildContext context) => context.read<UserProvider>();
-static UserProvider watch(BuildContext context) => context.watch<UserProvider>();
+MultiProvider(
+  providers: [
+    ChangeNotifierProvider(create: (context) => ThemeProvider(AppConfig.read(context).color)),
+    ChangeNotifierProvider(create: (context) => UserProvider()),
+    // ...add your global providers here
+  ],
+  builder: (context, child) => MaterialApp.router(/* ... */),
+)
 ```
 
-Global Provider Declaration in main.dart:
+## Standardize access with `read` / `watch`
+
+Every provider should expose static helpers so call sites stay short and consistent:
+
 ```dart
-void main() {
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => UserProvider()),
-        ChangeNotifierProvider(create: (_) => ThemeProvider(AppConfig.read(context).color)),
-      ],
-      child: MyApp(),
-    ),
-  );
+class UserProvider extends ChangeNotifier {
+  static UserProvider read(BuildContext context) => context.read<UserProvider>();
+  static UserProvider watch(BuildContext context) => context.watch<UserProvider>();
 }
 ```
 
-Accessing the Provider Anywhere in the App:
-```dart
-// Example of reading the user data
-final userProvider = UserProvider.watch(context);
-print(userProvider.userName);
+Use `read` for one-off actions (inside callbacks) and `watch` to rebuild when the value changes:
 
-// Example of updating the theme
-final themeProvider = ThemeProvider.read(context);
-themeProvider.toggleDarkMode();
+```dart
+// Rebuild when the user changes:
+final user = UserProvider.watch(context);
+if (user.isLoggedIn) { /* ... */ }
+
+// Update the theme from a callback (no rebuild needed here):
+ThemeProvider.read(context).setThemeMode(ThemeMode.dark);
 ```
 
-## Key Notes:
-1. Global Scope: Providers declared here are accessible across the entire application.
-2. Centralized Declaration: Declaring providers in main.dart ensures clarity and consistency in managing global states.
-3. Separation of Concerns: Avoid using this section for local or widget-specific providers. Use local providers only where needed for specific widgets or screens.
+## Key notes
 
-By following this approach, you ensure that your app's state management remains well-organized and scalable.
+1. **Global scope only.** Everything here is reachable across the whole app.
+2. **Centralized registration.** Declaring providers in `main.dart` keeps state management clear and consistent.
+3. **Separation of concerns.** Keep local/widget-specific providers next to their widget, not in this folder.

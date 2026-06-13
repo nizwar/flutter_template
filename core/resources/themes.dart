@@ -3,10 +3,11 @@ import '../providers/theme_provider.dart';
 
 /// A custom extension on [BuildContext] to provide custom theme provider.
 ThemeData themeData(BuildContext context, Brightness brightness) {
-  ThemeProvider provider = themeProvider(context);
-  ColorScheme colorScheme = ColorScheme.fromSwatch(primarySwatch: provider.colorSwatch, brightness: brightness);
-  ThemeData output = ThemeData(useMaterial3: true, primarySwatch: themeProvider(context).colorSwatch, brightness: brightness);
-  Color scaffoldBackground = brightness == Brightness.light ? Colors.white : Colors.grey.shade900;
+  final ThemeProvider provider = themeProvider(context);
+  final MaterialColor swatch = provider.colorSwatch;
+  final ColorScheme colorScheme = ColorScheme.fromSwatch(primarySwatch: swatch, brightness: brightness);
+  final ThemeData output = ThemeData(useMaterial3: true, primarySwatch: swatch, brightness: brightness);
+  final Color scaffoldBackground = brightness == Brightness.light ? Colors.white : Colors.grey.shade900;
 
   return output.copyWith(
     primaryColor: colorScheme.primary,
